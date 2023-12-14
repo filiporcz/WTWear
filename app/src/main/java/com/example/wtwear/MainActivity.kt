@@ -14,6 +14,14 @@ import com.example.wtwear.ui.theme.WTWearTheme
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.postgrest.Postgrest
 
+val supabase = createSupabaseClient(
+    supabaseUrl = "https://lwalmarsdlzmzzuvseus.supabase.co",
+    supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx3YWxtYXJzZGx6bXp6dXZzZXVzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDEwMTA2NzAsImV4cCI6MjAxNjU4NjY3MH0.pceUzcBcSClI84-1hOV9uvwwGqPTMYcU9Go6mGKaMsQ"
+) {
+    install(Postgrest)
+}
+//val url = BuildConfig.SUPABASE_URL
+//val apiKey = BuildConfig.SUPABASE_ANON_KEY
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
