@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">WTWear</string>
+    <string name="error_empty_city">City field cannot be empty!</string>
 </resources>
