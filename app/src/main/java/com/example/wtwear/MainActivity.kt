@@ -8,10 +8,12 @@
     import android.widget.TextView
     import android.widget.Toast
     import androidx.appcompat.app.AppCompatActivity
+    import androidx.fragment.app.Fragment
     import com.android.volley.Request
     import com.android.volley.RequestQueue
     import com.android.volley.toolbox.StringRequest
     import com.android.volley.toolbox.Volley
+    import com.google.android.material.bottomnavigation.BottomNavigationView
     import org.json.JSONArray
     import org.json.JSONException
     import org.json.JSONObject
@@ -37,6 +39,8 @@
         private val appid = "32e60a591b19acc174f0c20a4610964f"
         private val df = DecimalFormat("#.##")
 
+        private lateinit var bottomNavigationView: BottomNavigationView
+
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
             setContentView(R.layout.loading_screen)
@@ -51,6 +55,35 @@
             etCity = findViewById(R.id.etCity)
             etCountry = findViewById(R.id.etCountry)
             tvResult = findViewById(R.id.tvResult)
+
+            bottomNavigationView = findViewById(R.id.bottomNavigationView)
+
+            bottomNavigationView.setOnItemSelectedListener { menuItem ->
+                when(menuItem.itemId){
+                    R.id.home -> {
+                        replaceFragment(HomeFragment())
+                        true
+                    }
+                    R.id.weather -> {
+                        replaceFragment(WeatherFragment())
+                        true
+                    }
+                    R.id.profile -> {
+                        replaceFragment(ProfileFragment())
+                        true
+                    }
+                    R.id.settings -> {
+                        replaceFragment(SettingsFragment())
+                        true
+                    }
+                    else -> false
+                }
+            }
+            replaceFragment(HomeFragment())
+        }
+
+        private fun replaceFragment(fragment: Fragment){
+            supportFragmentManager.beginTransaction().replace(R.id.frame_layout, fragment).commit()
         }
 
         fun getWeatherDetails(view: View) {
