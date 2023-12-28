@@ -13,6 +13,7 @@
     import com.android.volley.RequestQueue
     import com.android.volley.toolbox.StringRequest
     import com.android.volley.toolbox.Volley
+    import com.example.wtwear.databinding.ActivityMainBinding
     import com.google.android.material.bottomnavigation.BottomNavigationView
     import org.json.JSONArray
     import org.json.JSONException
@@ -20,6 +21,22 @@
     import java.text.DecimalFormat
     import io.github.jan.supabase.createSupabaseClient
     import io.github.jan.supabase.postgrest.Postgrest
+    import android.Manifest
+    import android.annotation.SuppressLint
+    import android.content.pm.PackageManager
+    import android.location.LocationManager
+    import android.widget.Button
+    import androidx.activity.result.contract.ActivityResultContracts
+    import androidx.core.app.ActivityCompat
+    import com.google.android.gms.common.api.ResolvableApiException
+    import com.google.android.gms.location.LocationRequest
+    import com.google.android.gms.location.LocationSettingsRequest
+    import com.google.android.gms.location.Priority
+    import com.google.android.gms.tasks.CancellationTokenSource
+    import com.google.android.gms.location.FusedLocationProviderClient
+    import com.google.android.gms.location.LocationServices
+
+
 
 
 
@@ -39,6 +56,9 @@
         private val appid = "32e60a591b19acc174f0c20a4610964f"
         private val df = DecimalFormat("#.##")
 
+        private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+        private lateinit var tvLocation: TextView
+
         private lateinit var bottomNavigationView: BottomNavigationView
 
         override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,10 +68,20 @@
             Handler().postDelayed({
                 showMainLayout()
             }, 3000) // 3000 milliseconds (3 seconds)
+
+            fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         }
 
         private fun showMainLayout() {
             setContentView(R.layout.activity_main)
+
+            tvLocation = findViewById(R.id.tvLocation)
+
+            val btnGetLocation = findViewById<Button>(R.id.btn_get_location)
+            btnGetLocation.setOnClickListener {
+                fetchLocation()
+            }
+
             etCity = findViewById(R.id.etCity)
             etCountry = findViewById(R.id.etCountry)
             tvResult = findViewById(R.id.tvResult)
@@ -84,6 +114,27 @@
 
         private fun replaceFragment(fragment: Fragment){
             supportFragmentManager.beginTransaction().replace(R.id.frame_layout, fragment).commit()
+        }
+
+        private fun fetchLocation() {
+            val task = fusedLocationProviderClient.lastLocation
+            if (ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 101)
+                return
+            }
+            task.addOnSuccessListener {
+                if (it != null) {
+                    val locationText = "Latitude: ${it.latitude}, Longitude: ${it.longitude}"
+                    tvLocation.text = locationText
+                }
+            }
         }
 
         fun getWeatherDetails(view: View) {
