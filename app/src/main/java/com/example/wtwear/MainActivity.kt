@@ -13,7 +13,6 @@
     import com.android.volley.RequestQueue
     import com.android.volley.toolbox.StringRequest
     import com.android.volley.toolbox.Volley
-    import com.example.wtwear.databinding.ActivityMainBinding
     import com.google.android.material.bottomnavigation.BottomNavigationView
     import org.json.JSONArray
     import org.json.JSONException
@@ -36,10 +35,6 @@
     import com.google.android.gms.location.FusedLocationProviderClient
     import com.google.android.gms.location.LocationServices
 
-
-
-
-
     val supabase = createSupabaseClient(
         supabaseUrl = "https://lwalmarsdlzmzzuvseus.supabase.co",
         supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx3YWxtYXJzZGx6bXp6dXZzZXVzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDEwMTA2NzAsImV4cCI6MjAxNjU4NjY3MH0.pceUzcBcSClI84-1hOV9uvwwGqPTMYcU9Go6mGKaMsQ"
@@ -57,7 +52,7 @@
         private val df = DecimalFormat("#.##")
 
         private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
-        private lateinit var tvLocation: TextView
+        private lateinit var locationText: String
 
         private lateinit var bottomNavigationView: BottomNavigationView
 
@@ -75,16 +70,7 @@
         private fun showMainLayout() {
             setContentView(R.layout.activity_main)
 
-            tvLocation = findViewById(R.id.tvLocation)
-
-            val btnGetLocation = findViewById<Button>(R.id.btn_get_location)
-            btnGetLocation.setOnClickListener {
-                fetchLocation()
-            }
-
-            etCity = findViewById(R.id.etCity)
-            etCountry = findViewById(R.id.etCountry)
-            tvResult = findViewById(R.id.tvResult)
+            fetchLocation()
 
             bottomNavigationView = findViewById(R.id.bottomNavigationView)
 
@@ -117,7 +103,6 @@
         }
 
         private fun fetchLocation() {
-            val task = fusedLocationProviderClient.lastLocation
             if (ActivityCompat.checkSelfPermission(
                     this,
                     Manifest.permission.ACCESS_FINE_LOCATION
@@ -129,14 +114,15 @@
                 ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 101)
                 return
             }
-            task.addOnSuccessListener {
-                if (it != null) {
-                    val locationText = "Latitude: ${it.latitude}, Longitude: ${it.longitude}"
-                    tvLocation.text = locationText
+            fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
+                if (location != null) {
+                    // Update the tvLocation TextView with the location information
+                    val locationText = "${location.latitude}, ${location.longitude}"
                 }
             }
         }
 
+        /*
         fun getWeatherDetails(view: View) {
             val city = etCity.text.toString().trim()
             val country = etCountry.text.toString().trim()
@@ -201,4 +187,5 @@
                 requestQueue.add(stringRequest)
             }
         }
+         */
     }

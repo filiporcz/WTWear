@@ -13,6 +13,12 @@
     <color name="ui9">#D76200</color>
     <color name="ui10">#CF4800</color>
 
+    <color name="contrast1">#C8C8C8</color>
+    <color name="contrast2">#ABABAB</color>
+    <color name="contrast3">#818181</color>
+    <color name="contrast4">#6C6C6C</color>
+    <color name="contrast5">#4C4C4C</color>
+    <color name="contrast6">#2A2A2A</color>
 
 
 </resources>

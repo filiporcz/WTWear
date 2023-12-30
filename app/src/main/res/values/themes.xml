@@ -4,4 +4,10 @@
     <style name="App.Custom.Indicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
         <item name="android:color">@color/ui2</item>
     </style>
+
+    <style name="genderSwitch" parent="Theme.AppCompat.Light">
+        <item name="colorControlActivated">@color/ui5</item>
+        <item name="colorSwitchThumbNormal">@color/ui2</item>
+        <item name="android:colorForeground">@color/ui5</item>
+    </style>
 </resources>
