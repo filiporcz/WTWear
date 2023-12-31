@@ -34,6 +34,7 @@
     import com.google.android.gms.tasks.CancellationTokenSource
     import com.google.android.gms.location.FusedLocationProviderClient
     import com.google.android.gms.location.LocationServices
+    import android.widget.ImageView
 
     val supabase = createSupabaseClient(
         supabaseUrl = "https://lwalmarsdlzmzzuvseus.supabase.co",
@@ -56,6 +57,12 @@
 
         private lateinit var bottomNavigationView: BottomNavigationView
 
+        //change this later accordingly
+        private val hatImages = listOf(R.drawable.hat1_n, R.drawable.hat2_f, R.drawable.hat3_n)
+        private val coatImages = listOf(R.drawable.coat1_n, R.drawable.coat2_f, R.drawable.coat3_n)
+        private val trousersImages = listOf(R.drawable.trousers1_n, R.drawable.trousers2_n, R.drawable.trousers3_n)
+        private val shoesImages = listOf(R.drawable.shoes1_n, R.drawable.shoes2_n, R.drawable.shoes3_n)
+
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
             setContentView(R.layout.loading_screen)
@@ -75,30 +82,29 @@
             bottomNavigationView = findViewById(R.id.bottomNavigationView)
 
             bottomNavigationView.setOnItemSelectedListener { menuItem ->
-                when(menuItem.itemId){
+                when (menuItem.itemId) {
                     R.id.home -> {
                         replaceFragment(HomeFragment())
                         true
                     }
+
                     R.id.weather -> {
                         replaceFragment(WeatherFragment())
                         true
                     }
-                    R.id.profile -> {
-                        replaceFragment(ProfileFragment())
-                        true
-                    }
+
                     R.id.settings -> {
                         replaceFragment(SettingsFragment())
                         true
                     }
+
                     else -> false
                 }
             }
             replaceFragment(HomeFragment())
         }
 
-        private fun replaceFragment(fragment: Fragment){
+        private fun replaceFragment(fragment: Fragment) {
             supportFragmentManager.beginTransaction().replace(R.id.frame_layout, fragment).commit()
         }
 
@@ -111,7 +117,11 @@
                     Manifest.permission.ACCESS_COARSE_LOCATION
                 ) != PackageManager.PERMISSION_GRANTED
             ) {
-                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 101)
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                    101
+                )
                 return
             }
             fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
@@ -121,6 +131,37 @@
                 }
             }
         }
+
+        private fun setOnClickListenerForImage(
+            button: ImageView,
+            middleImage: ImageView,
+            imageList: List<Int>
+        ) {
+            button.setOnClickListener {
+                // Get the current index of the middle image
+                val currentIndex = imageList.indexOf(middleImage.tag as? Int ?: 0)
+
+                // Calculate the new index based on the button pressed
+                val newIndex = when (button.id) {
+                    R.id.leftButton1, R.id.leftButton2, R.id.leftButton3, R.id.leftButton4 -> {
+                        (currentIndex - 1 + imageList.size) % imageList.size
+                    }
+
+                    R.id.rightButton1, R.id.rightButton2, R.id.rightButton3, R.id.rightButton4 -> {
+                        (currentIndex + 1) % imageList.size
+                    }
+
+                    else -> currentIndex
+                }
+
+                // Update the middle image with the new resource
+                middleImage.setImageResource(imageList[newIndex])
+
+                // Save the new index as a tag for the middle image
+                middleImage.tag = newIndex
+            }
+        }
+    }
 
         /*
         fun getWeatherDetails(view: View) {
@@ -188,4 +229,3 @@
             }
         }
          */
-    }
