@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.wtwear"
-        minSdk 24
+        minSdk 26
         targetSdk 34
         versionCode 1
         versionName "1.0"
@@ -48,7 +48,7 @@ android {
 
     packagingOptions {
         resources {
-            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+            excludes += '/META-INF/{AL2.0,LGPL2.1,DEPENDENCIES}'
         }
     }
 }
@@ -86,4 +86,14 @@ dependencies {
     implementation 'com.google.android.gms:play-services-location:21.0.1'
     implementation 'androidx.fragment:fragment-ktx:1.6.2'
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.23'
+
+    // Backend
+    implementation("org.http4k:http4k-core:5.12.0.0")
+    implementation("org.http4k:http4k-client-apache:5.12.0.0")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.16.1")
+
+    implementation('org.postgresql:postgresql:42.5.1')
+    implementation("org.ktorm:ktorm-core:3.6.0")
+    implementation("org.ktorm:ktorm-support-postgresql:3.6.0")
+    implementation("org.ktorm:ktorm-jackson:3.6.0")
 }

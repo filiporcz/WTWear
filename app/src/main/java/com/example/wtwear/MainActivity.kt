@@ -35,15 +35,10 @@
     import com.google.android.gms.location.FusedLocationProviderClient
     import com.google.android.gms.location.LocationServices
     import android.widget.ImageView
+    import com.example.wtwear.backend.data.User
 
-    val supabase = createSupabaseClient(
-        supabaseUrl = "https://lwalmarsdlzmzzuvseus.supabase.co",
-        supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx3YWxtYXJzZGx6bXp6dXZzZXVzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDEwMTA2NzAsImV4cCI6MjAxNjU4NjY3MH0.pceUzcBcSClI84-1hOV9uvwwGqPTMYcU9Go6mGKaMsQ"
-    ) {
-        install(Postgrest)
-    }
-    //val url = BuildConfig.SUPABASE_URL
-    //val apiKey = BuildConfig.SUPABASE_ANON_KEY
+    private lateinit var USER: User
+
     class MainActivity : AppCompatActivity() {
         private lateinit var etCity: EditText
         private lateinit var etCountry: EditText
@@ -77,7 +72,12 @@
         private fun showMainLayout() {
             setContentView(R.layout.activity_main)
 
-            fetchLocation()
+            //fetchLocation()
+            //USER = User(
+            //    "Bristol",
+            //    "UK",
+            //    null
+            //)
 
             bottomNavigationView = findViewById(R.id.bottomNavigationView)
 
@@ -108,7 +108,10 @@
             supportFragmentManager.beginTransaction().replace(R.id.frame_layout, fragment).commit()
         }
 
-        private fun fetchLocation() {
+        private fun fetchLocation(coord: String): Double? {
+            var latitude: Double? = null
+            var longitude: Double? = null
+
             if (ActivityCompat.checkSelfPermission(
                     this,
                     Manifest.permission.ACCESS_FINE_LOCATION
@@ -122,13 +125,20 @@
                     arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                     101
                 )
-                return
+                return null
             }
             fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
                 if (location != null) {
                     // Update the tvLocation TextView with the location information
-                    val locationText = "${location.latitude}, ${location.longitude}"
+                    //val locationText = "${location.latitude}, ${location.longitude}"
+                    latitude = location.latitude
+                    longitude = location.longitude
                 }
+            }
+            return if (coord == "lat") {
+                return latitude
+            } else {
+                return longitude
             }
         }
 
