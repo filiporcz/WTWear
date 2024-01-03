@@ -24,6 +24,7 @@
     import android.annotation.SuppressLint
     import android.content.pm.PackageManager
     import android.location.LocationManager
+    import android.util.Log
     import android.widget.Button
     import androidx.activity.result.contract.ActivityResultContracts
     import androidx.core.app.ActivityCompat
@@ -35,9 +36,18 @@
     import com.google.android.gms.location.FusedLocationProviderClient
     import com.google.android.gms.location.LocationServices
     import android.widget.ImageView
+    import androidx.lifecycle.lifecycleScope
     import com.example.wtwear.backend.data.User
+    import com.example.wtwear.backend.data.fetchWSData
+    import com.example.wtwear.backend.logic.matchTemp
+    import kotlinx.coroutines.CoroutineExceptionHandler
+    import kotlinx.coroutines.Dispatchers
+    import kotlinx.coroutines.GlobalScope
+    import kotlinx.coroutines.launch
 
     private lateinit var USER: User
+    private var latitude: Double? = null
+    private var longitude: Double? = null
 
     class MainActivity : AppCompatActivity() {
         private lateinit var etCity: EditText
@@ -72,12 +82,25 @@
         private fun showMainLayout() {
             setContentView(R.layout.activity_main)
 
-            //fetchLocation()
-            //USER = User(
-            //    "Bristol",
-            //    "UK",
-            //    null
-            //)
+            fetchLocation()
+            Log.d("LATITUDE:", latitude.toString())
+            Log.d("LONGITUDE:", longitude.toString())
+            val exceptionHandler = CoroutineExceptionHandler{_ , throwable->
+                Log.d("exception", "$throwable")
+                throwable.printStackTrace()
+            }
+            lifecycleScope.launch(Dispatchers.IO + exceptionHandler) {
+                USER = User(
+                    "Bristol",
+                    "UK",
+                    null
+                )
+                 Log.d("USER:", USER.clothes().toString())
+                //val test = fetchWSData("Bristol", "UK")
+                //Log.d("Weather", test.toString())
+                //val test = matchTemp(10)
+                //Log.d("Temp", test.toString())
+            }
 
             bottomNavigationView = findViewById(R.id.bottomNavigationView)
 
@@ -108,9 +131,9 @@
             supportFragmentManager.beginTransaction().replace(R.id.frame_layout, fragment).commit()
         }
 
-        private fun fetchLocation(coord: String): Double? {
-            var latitude: Double? = null
-            var longitude: Double? = null
+        private fun fetchLocation() {
+            //var latitude: Double? = null
+            //var longitude: Double? = null
 
             if (ActivityCompat.checkSelfPermission(
                     this,
@@ -125,7 +148,7 @@
                     arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                     101
                 )
-                return null
+                return
             }
             fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
                 if (location != null) {
@@ -134,11 +157,6 @@
                     latitude = location.latitude
                     longitude = location.longitude
                 }
-            }
-            return if (coord == "lat") {
-                return latitude
-            } else {
-                return longitude
             }
         }
 
