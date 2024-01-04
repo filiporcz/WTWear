@@ -45,11 +45,11 @@
     import kotlinx.coroutines.GlobalScope
     import kotlinx.coroutines.launch
 
-    private lateinit var USER: User
-    private var latitude: Double? = null
-    private var longitude: Double? = null
-
     class MainActivity : AppCompatActivity() {
+        private var latitude: Double? = null
+        private var longitude: Double? = null
+        private val userViewModel = UserViewModel()
+
         private lateinit var etCity: EditText
         private lateinit var etCountry: EditText
         private lateinit var tvResult: TextView
@@ -68,38 +68,72 @@
         private val trousersImages = listOf(R.drawable.trousers1_n, R.drawable.trousers2_n, R.drawable.trousers3_n)
         private val shoesImages = listOf(R.drawable.shoes1_n, R.drawable.shoes2_n, R.drawable.shoes3_n)
 
+        private val exceptionHandler = CoroutineExceptionHandler{ _, throwable->
+            Log.d("ERROR FROM EXCEPTION HANDLER:", "$throwable")
+            throwable.printStackTrace()
+        }
+
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
+            Log.d("CHANGING", "Switching to loading screen")
             setContentView(R.layout.loading_screen)
-            // Delay switching to the main layout
-            Handler().postDelayed({
+            val button = findViewById<Button>(R.id.button)
+
+            button.setOnClickListener {
+                if (ActivityCompat.checkSelfPermission(
+                        this,
+                        Manifest.permission.ACCESS_FINE_LOCATION
+                    ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                        this,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
+                    ActivityCompat.requestPermissions(
+                        this,
+                        arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                        101
+                    )
+                }
+                fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
+                    if (location != null) {
+                        // Update the tvLocation TextView with the location information
+                        lifecycleScope.launch(Dispatchers.IO + exceptionHandler) {
+                            userViewModel.initOrUpdate(
+                                location.latitude,
+                                location.longitude,
+                                "m"
+                            )
+                            Log.d("userViewModel RESULT:", userViewModel.getData().toString())
+                            Log.d("userViewModel Weather RESULT:", userViewModel.getData().weatherInfo().toString())
+                        }
+                        Log.d(
+                            "lastLocation RESULT:",
+                            "LATITUDE: ${location.latitude}, LONGITUDE: ${location.longitude}"
+                        )
+                    }
+                }
+
                 showMainLayout()
-            }, 3000) // 3000 milliseconds (3 seconds)
+            }
+            //replaceFragment(LoadingScreen())
+            // Delay switching to the main layout
+            //Handler().postDelayed({
+            //}, 3000) // 3000 milliseconds (3 seconds)
 
             fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         }
 
-        private fun showMainLayout() {
+        fun showMainLayout() {
             setContentView(R.layout.activity_main)
 
-            fetchLocation()
-            Log.d("LATITUDE:", latitude.toString())
-            Log.d("LONGITUDE:", longitude.toString())
-            val exceptionHandler = CoroutineExceptionHandler{_ , throwable->
-                Log.d("exception", "$throwable")
-                throwable.printStackTrace()
-            }
+            //fetchLocation()
+            //Log.d("LATITUDE:", latitude.toString())
+            //Log.d("LONGITUDE:", longitude.toString())
             lifecycleScope.launch(Dispatchers.IO + exceptionHandler) {
-                USER = User(
-                    "Bristol",
-                    "UK",
-                    null
-                )
-                 Log.d("USER:", USER.clothes().toString())
-                //val test = fetchWSData("Bristol", "UK")
-                //Log.d("Weather", test.toString())
-                //val test = matchTemp(10)
-                //Log.d("Temp", test.toString())
+                val test = fetchWSData("Bristol", "UK")
+                Log.d("Weather", test.toString())
+                val test2 = matchTemp(10)
+                Log.d("Temp", test2.toString())
             }
 
             bottomNavigationView = findViewById(R.id.bottomNavigationView)
