@@ -1,21 +1,21 @@
 package com.example.wtwear
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentTransaction
-import androidx.fragment.app.DialogFragment
+import android.widget.TextView
+import androidx.lifecycle.Observer
 
 class HomeFragment : Fragment() {
 
-    private val hatImages = listOf(R.drawable.hat1_n, R.drawable.hat2_f, R.drawable.hat3_n)
-    private val coatImages = listOf(R.drawable.coat1_n, R.drawable.coat2_f, R.drawable.coat3_n)
-    private val trousersImages = listOf(R.drawable.trousers1_n, R.drawable.trousers2_n, R.drawable.trousers3_n)
-    private val shoesImages = listOf(R.drawable.shoes1_n, R.drawable.shoes2_n, R.drawable.shoes3_n)
+    //private val hatImages = listOf(R.drawable.hat1_n, R.drawable.hat2_f, R.drawable.hat3_n)
+    //private val coatImages = listOf(R.drawable.coat1_n, R.drawable.coat2_f, R.drawable.coat3_n)
+    //private val trousersImages = listOf(R.drawable.trousers1_n, R.drawable.trousers2_n, R.drawable.trousers3_n)
+    //private val shoesImages = listOf(R.drawable.shoes1_n, R.drawable.shoes2_n, R.drawable.shoes3_n)
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -23,6 +23,14 @@ class HomeFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_home, container, false)
+
+        val temperature = view.findViewById<TextView>(R.id.temperatureText)
+        val feelsLike = view.findViewById<TextView>(R.id.feelsLikeText)
+
+        userViewModel.weather.observe(viewLifecycleOwner, Observer {
+            temperature.text = it.temperature.toString()
+            feelsLike.text = it.feelsLike.toString()
+        })
 
         val hatImage = view.findViewById<ImageView>(R.id.hatImage)
         val topImage = view.findViewById<ImageView>(R.id.topImage)
@@ -41,17 +49,81 @@ class HomeFragment : Fragment() {
         val leftButton4 = view.findViewById<ImageView>(R.id.leftButton4)
         val rightButton4 = view.findViewById<ImageView>(R.id.rightButton4)
 
-        setOnClickListenerForImage(leftButton1, rightButton1, hatImage, hatImages)
-        setOnClickListenerForImage(leftButton2, rightButton2, topImage, coatImages)
-        setOnClickListenerForImage(leftButton3, rightButton3, trousersImage, trousersImages)
-        setOnClickListenerForImage(leftButton4, rightButton4, shoesImage, shoesImages)
+        userViewModel.clothes.observe(viewLifecycleOwner, Observer {
+            Log.d("userViewModel Test Clothes:", it.toString())
 
-        setClickListenerForPopup(hatImage)
-        setClickListenerForPopup(topImage)
-        setClickListenerForPopup(trousersImage)
-        setClickListenerForPopup(shoesImage)
+            val hat = it.hat
+            val top = it.top
+            val trousers = it.trousers
+            val shoes = it.shoes
+
+            val hatImages = imageToXMLTag(it.images(hat))
+            val topImages = imageToXMLTag(it.images(top))
+            val trousersImages = imageToXMLTag(it.images(trousers))
+            val shoesImages = imageToXMLTag(it.images(shoes))
+
+            val hatDescriptions = it.descriptions(hat)
+            val topDescriptions = it.descriptions(top)
+            val trousersDescriptions = it.descriptions(trousers)
+            val shoesDescriptions = it.descriptions(shoes)
+
+            Log.d("Test Images Hat:", hatImages.toString())
+            Log.d("Test Images Top:", topImages.toString())
+            Log.d("Test Images Trousers:", trousersImages.toString())
+            Log.d("Test Images Shoes:", shoesImages.toString())
+
+            changeClothingXMLImage(hatImage, hatImages)
+            changeClothingXMLImage(topImage, topImages)
+            changeClothingXMLImage(trousersImage, trousersImages)
+            changeClothingXMLImage(shoesImage, shoesImages)
+
+            changeClothingXMLDescription(hatImage, hatDescriptions)
+            changeClothingXMLDescription(topImage, topDescriptions)
+            changeClothingXMLDescription(trousersImage, trousersDescriptions)
+            changeClothingXMLDescription(shoesImage, shoesDescriptions)
+
+            setOnClickListenerForImage(leftButton1, rightButton1, hatImage, hatImages)
+            setOnClickListenerForImage(leftButton2, rightButton2, topImage, topImages)
+            setOnClickListenerForImage(leftButton3, rightButton3, trousersImage, trousersImages)
+            setOnClickListenerForImage(leftButton4, rightButton4, shoesImage, shoesImages)
+
+            setClickListenerForPopup(hatImage)
+            setClickListenerForPopup(topImage)
+            setClickListenerForPopup(trousersImage)
+            setClickListenerForPopup(shoesImage)
+        })
+
+        //setOnClickListenerForImage(leftButton1, rightButton1, hatImage, hatImages)
+        //setOnClickListenerForImage(leftButton2, rightButton2, topImage, coatImages)
+        //setOnClickListenerForImage(leftButton3, rightButton3, trousersImage, trousersImages)
+        //setOnClickListenerForImage(leftButton4, rightButton4, shoesImage, shoesImages)
+
+        //setClickListenerForPopup(hatImage)
+        //setClickListenerForPopup(topImage)
+        //setClickListenerForPopup(trousersImage)
+        //setClickListenerForPopup(shoesImage)
 
         return view
+    }
+
+    private fun imageToXMLTag(list: List<String?>): List<Int> {
+        return list.map { resources.getIdentifier(it, "drawable", context?.packageName)  }
+    }
+
+    private fun changeClothingXMLImage(clothing: ImageView, clothes: List<Int>) {
+        if (clothes.isEmpty()) {
+            clothing.setImageResource(android.R.color.transparent)
+        } else {
+            clothing.setImageResource(clothes[0])
+        }
+    }
+
+    private fun changeClothingXMLDescription(clothing: ImageView, clothes: List<String?>) {
+        if (clothes.isEmpty() or (clothes[0].isNullOrEmpty())) {
+            clothing.contentDescription = "No description"
+        } else {
+            clothing.contentDescription = clothes[0]
+        }
     }
 
     private fun setOnClickListenerForImage(leftButton: ImageView, rightButton: ImageView, middleImage: ImageView, imageList: List<Int>) {
@@ -87,9 +159,10 @@ class HomeFragment : Fragment() {
         imageView.setOnClickListener {
             // Get the drawable resource ID from the tag of the clicked ImageView
             val imageResource = imageView.tag as? Int ?: 0
+            val descriptionResource = imageView.contentDescription
 
             // Create an instance of the PopUpFragment with the selected drawable resource ID
-            val popUpFragment = PopUpFragment.newInstance(imageResource)
+            val popUpFragment = PopUpFragment.newInstance(imageResource, descriptionResource)
 
             // Show the PopUpFragment as a dialog
             popUpFragment.show(requireActivity().supportFragmentManager, "popUpFragment")

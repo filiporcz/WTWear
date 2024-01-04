@@ -33,24 +33,23 @@ class WeatherFragment : Fragment() {
         val windDegree = view.findViewById<TextView>(R.id.windDegreeImage)
         val windDirection = view.findViewById<TextView>(R.id.windDirectionImage)
 
-        userViewModel.user.observe(viewLifecycleOwner, Observer {
-            val weather = it.weatherInfo()
-            Log.d("userViewModel Test Weather:", weather.toString())
+        userViewModel.weather.observe(viewLifecycleOwner, Observer {
+            Log.d("userViewModel Test Weather:", it.toString())
 
-            temperature.text = weather.temperature.toString()
-            feelsLike.text = weather.feelsLike.toString()
+            temperature.text = it.temperature.toString()
+            feelsLike.text = it.feelsLike.toString()
 
-            precipitation.text = weather.precipitation.toString()
-            uvIndex.text = weather.uvIndex.toString()
+            precipitation.text = it.precipitation.toString()
+            uvIndex.text = it.uvIndex.toString()
 
-            humidity.text = weather.humidity.toString()
-            pressure.text = weather.pressure.toString()
+            humidity.text = it.humidity.toString()
+            pressure.text = it.pressure.toString()
 
-            cloudCover.text = weather.cloudCover.toString()
-            windSpeed.text = weather.wind.toString()
+            cloudCover.text = it.cloudCover.toString()
+            windSpeed.text = it.wind.toString()
 
-            windDegree.text = weather.windDegree.toString()
-            windDirection.text = weather.windDir
+            windDegree.text = it.windDegree.toString()
+            windDirection.text = it.windDir
         })
 
         return view

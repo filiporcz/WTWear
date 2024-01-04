@@ -78,7 +78,8 @@
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
-            userViewModel = ViewModelProvider(this).get(UserViewModel::class.java)
+            userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
+
             Log.d("CHANGING", "Switching to loading screen")
             setContentView(R.layout.loading_screen)
             val button = findViewById<Button>(R.id.button)
@@ -100,22 +101,27 @@
                 }
                 fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
                     if (location != null) {
-                        userViewModel.initOrUpdate(
+                         userViewModel.initOrUpdate(
                             location.latitude,
                             location.longitude,
                             "m"
                         )
+
                         userViewModel.user.observe(this, Observer {
                             Log.d("userViewModel Test User:", it.toString())
+                            lifecycleScope.launch(Dispatchers.IO + exceptionHandler) {
+                                userViewModel.weather.postValue(it.weatherInfo())
+                                userViewModel.clothes.postValue(it.clothes())
+                            }
+                            showMainLayout()
                         })
+
                         Log.d(
                             "lastLocation RESULT:",
                             "LATITUDE: ${location.latitude}, LONGITUDE: ${location.longitude}"
                         )
                     }
                 }
-
-                showMainLayout()
             }
             //replaceFragment(LoadingScreen())
             // Delay switching to the main layout
@@ -128,6 +134,7 @@
         private fun showMainLayout() {
             setContentView(R.layout.activity_main)
 
+            Log.d("CHANGING:", "Now on main layout")
             //fetchLocation()
             //Log.d("LATITUDE:", latitude.toString())
             //Log.d("LONGITUDE:", longitude.toString())
