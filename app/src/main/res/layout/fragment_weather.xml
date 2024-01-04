@@ -74,13 +74,12 @@
                         android:layout_centerHorizontal="true"
                         android:layout_below="@+id/precipitationImage"/>
 
-                    <ImageView
+                    <TextView
                         android:id="@+id/precipitationImage"
                         android:layout_width="70dp"
                         android:layout_height="70dp"
-                        android:src="@drawable/baseline_thermostat_24"
-                        android:layout_marginTop="15dp"
-                        android:layout_centerHorizontal="true"/>
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="15dp" />
                 </RelativeLayout>
             </androidx.cardview.widget.CardView>
 
@@ -108,13 +107,12 @@
                         android:layout_centerHorizontal="true"
                         android:layout_below="@+id/uvIndexImage"/>
 
-                    <ImageView
+                    <TextView
                         android:id="@+id/uvIndexImage"
                         android:layout_width="70dp"
                         android:layout_height="70dp"
-                        android:src="@drawable/baseline_thermostat_24"
-                        android:layout_marginTop="15dp"
-                        android:layout_centerHorizontal="true"/>
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="15dp" />
                 </RelativeLayout>
             </androidx.cardview.widget.CardView>
 
@@ -157,13 +155,12 @@
                         android:layout_centerHorizontal="true"
                         android:layout_below="@+id/humidityImage"/>
 
-                    <ImageView
+                    <TextView
                         android:id="@+id/humidityImage"
                         android:layout_width="70dp"
                         android:layout_height="70dp"
-                        android:src="@drawable/baseline_thermostat_24"
-                        android:layout_marginTop="15dp"
-                        android:layout_centerHorizontal="true"/>
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="15dp" />
                 </RelativeLayout>
             </androidx.cardview.widget.CardView>
 
@@ -191,13 +188,12 @@
                         android:layout_centerHorizontal="true"
                         android:layout_below="@+id/pressureImage"/>
 
-                    <ImageView
+                    <TextView
                         android:id="@+id/pressureImage"
                         android:layout_width="70dp"
                         android:layout_height="70dp"
-                        android:src="@drawable/baseline_thermostat_24"
-                        android:layout_marginTop="15dp"
-                        android:layout_centerHorizontal="true"/>
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="15dp" />
                 </RelativeLayout>
             </androidx.cardview.widget.CardView>
 
@@ -240,13 +236,12 @@
                         android:layout_centerHorizontal="true"
                         android:layout_below="@+id/cloudCoverImage"/>
 
-                    <ImageView
+                    <TextView
                         android:id="@+id/cloudCoverImage"
                         android:layout_width="70dp"
                         android:layout_height="70dp"
-                        android:src="@drawable/baseline_thermostat_24"
-                        android:layout_marginTop="15dp"
-                        android:layout_centerHorizontal="true"/>
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="15dp" />
                 </RelativeLayout>
             </androidx.cardview.widget.CardView>
 
@@ -274,13 +269,12 @@
                         android:layout_centerHorizontal="true"
                         android:layout_below="@+id/windSpeedImage"/>
 
-                    <ImageView
+                    <TextView
                         android:id="@+id/windSpeedImage"
                         android:layout_width="70dp"
                         android:layout_height="70dp"
-                        android:src="@drawable/baseline_thermostat_24"
-                        android:layout_marginTop="15dp"
-                        android:layout_centerHorizontal="true"/>
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="15dp" />
                 </RelativeLayout>
             </androidx.cardview.widget.CardView>
 
@@ -323,13 +317,12 @@
                         android:layout_centerHorizontal="true"
                         android:layout_below="@+id/windDegreeImage"/>
 
-                    <ImageView
+                    <TextView
                         android:id="@+id/windDegreeImage"
                         android:layout_width="70dp"
                         android:layout_height="70dp"
-                        android:src="@drawable/baseline_thermostat_24"
-                        android:layout_marginTop="15dp"
-                        android:layout_centerHorizontal="true"/>
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="15dp" />
                 </RelativeLayout>
             </androidx.cardview.widget.CardView>
 
@@ -357,13 +350,12 @@
                         android:layout_centerHorizontal="true"
                         android:layout_below="@+id/windDirectionImage"/>
 
-                    <ImageView
+                    <TextView
                         android:id="@+id/windDirectionImage"
                         android:layout_width="70dp"
                         android:layout_height="70dp"
-                        android:src="@drawable/baseline_thermostat_24"
-                        android:layout_marginTop="15dp"
-                        android:layout_centerHorizontal="true"/>
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="15dp" />
                 </RelativeLayout>
             </androidx.cardview.widget.CardView>
 

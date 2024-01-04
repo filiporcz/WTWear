@@ -36,6 +36,8 @@
     import com.google.android.gms.location.FusedLocationProviderClient
     import com.google.android.gms.location.LocationServices
     import android.widget.ImageView
+    import androidx.lifecycle.Observer
+    import androidx.lifecycle.ViewModelProvider
     import androidx.lifecycle.lifecycleScope
     import com.example.wtwear.backend.data.User
     import com.example.wtwear.backend.data.fetchWSData
@@ -45,10 +47,16 @@
     import kotlinx.coroutines.GlobalScope
     import kotlinx.coroutines.launch
 
+    val exceptionHandler = CoroutineExceptionHandler{ _, throwable->
+        Log.d("ERROR FROM EXCEPTION HANDLER:", "$throwable")
+        throwable.printStackTrace()
+    }
+
+    lateinit var userViewModel: UserViewModel
+
     class MainActivity : AppCompatActivity() {
         private var latitude: Double? = null
         private var longitude: Double? = null
-        private val userViewModel = UserViewModel()
 
         private lateinit var etCity: EditText
         private lateinit var etCountry: EditText
@@ -68,13 +76,9 @@
         private val trousersImages = listOf(R.drawable.trousers1_n, R.drawable.trousers2_n, R.drawable.trousers3_n)
         private val shoesImages = listOf(R.drawable.shoes1_n, R.drawable.shoes2_n, R.drawable.shoes3_n)
 
-        private val exceptionHandler = CoroutineExceptionHandler{ _, throwable->
-            Log.d("ERROR FROM EXCEPTION HANDLER:", "$throwable")
-            throwable.printStackTrace()
-        }
-
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
+            userViewModel = ViewModelProvider(this).get(UserViewModel::class.java)
             Log.d("CHANGING", "Switching to loading screen")
             setContentView(R.layout.loading_screen)
             val button = findViewById<Button>(R.id.button)
@@ -96,16 +100,14 @@
                 }
                 fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
                     if (location != null) {
-                        // Update the tvLocation TextView with the location information
-                        lifecycleScope.launch(Dispatchers.IO + exceptionHandler) {
-                            userViewModel.initOrUpdate(
-                                location.latitude,
-                                location.longitude,
-                                "m"
-                            )
-                            Log.d("userViewModel RESULT:", userViewModel.getData().toString())
-                            Log.d("userViewModel Weather RESULT:", userViewModel.getData().weatherInfo().toString())
-                        }
+                        userViewModel.initOrUpdate(
+                            location.latitude,
+                            location.longitude,
+                            "m"
+                        )
+                        userViewModel.user.observe(this, Observer {
+                            Log.d("userViewModel Test User:", it.toString())
+                        })
                         Log.d(
                             "lastLocation RESULT:",
                             "LATITUDE: ${location.latitude}, LONGITUDE: ${location.longitude}"
@@ -123,18 +125,35 @@
             fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         }
 
-        fun showMainLayout() {
+        private fun showMainLayout() {
             setContentView(R.layout.activity_main)
 
             //fetchLocation()
             //Log.d("LATITUDE:", latitude.toString())
             //Log.d("LONGITUDE:", longitude.toString())
-            lifecycleScope.launch(Dispatchers.IO + exceptionHandler) {
-                val test = fetchWSData("Bristol", "UK")
-                Log.d("Weather", test.toString())
-                val test2 = matchTemp(10)
-                Log.d("Temp", test2.toString())
-            }
+            //lifecycleScope.launch(Dispatchers.IO + exceptionHandler) {
+            //    val test = fetchWSData("Bristol", "UK")
+            //    Log.d("Weather", test.toString())
+            //    val test2 = matchTemp(10)
+            //    Log.d("Temp", test2.toString())
+            //    Log.d("userViewModel TEST 2:", userViewModel.getData().toString())
+            //    Log.d("userViewModel Weather TEST 2:", userViewModel.getData().weatherInfo().toString())
+            //}
+
+            userViewModel.user.observe(this, Observer {
+                Log.d("userViewModel Test 2 User:", it.toString())
+            })
+
+            //userViewModel.weather.observe(this, Observer {
+            //    Log.d("userViewModel Test Weather:", it.toString())
+            //})
+            //userViewModel.weather.observe(this, Observer {
+            //    Log.d("userViewModel Test 2 Weather:", it.toString())
+            //})
+
+            //userViewModel.clothes.observe(this, Observer {
+            //    Log.d("userViewModel Test 2 Clothes:", it.toString())
+            //})
 
             bottomNavigationView = findViewById(R.id.bottomNavigationView)
 
