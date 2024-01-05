@@ -111,11 +111,13 @@
 
                         userViewModel.user.observe(this, Observer {
                             Log.d("userViewModel Test User:", it.toString())
+
                             lifecycleScope.launch(Dispatchers.IO + exceptionHandler) {
                                 userViewModel.weather.postValue(it.weatherInfo())
                                 userViewModel.clothes.postValue(it.clothes())
+
                                 withContext(Dispatchers.Main) {
-                                    this@MainActivity.showMainLayout()
+                                    showMainLayout()
                                 }
                             }
                         })

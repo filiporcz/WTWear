@@ -51,8 +51,9 @@ class WeatherFragment : Fragment() {
                 feelsLike.text = celsiusToFahrenheit(it.feelsLike).toString()
 
                 precipitation.text = mmToInches(it.precipitation).toString()
-                windSpeed.text = cmToInches(it.wind).toString()
+                windSpeed.text = kmhToMph(it.wind).toString()
             }
+
             uvIndex.text = it.uvIndex.toString()
 
             humidity.text = it.humidity.toString()
