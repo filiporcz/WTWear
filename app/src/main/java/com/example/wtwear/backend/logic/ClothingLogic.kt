@@ -40,11 +40,3 @@ fun matchClothesType(
     return clothes
         .filter { it.clothing_type eq type }
 }
-
-//fun matchOneClothingType(
-//    clothes: EntitySequence<Clothing, Clothings>,
-//    type: String
-//): Clothing? {
-//    return clothes
-//        .find { it.clothing_type eq type }
-//}

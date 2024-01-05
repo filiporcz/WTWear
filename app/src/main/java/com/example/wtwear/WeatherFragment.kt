@@ -1,5 +1,6 @@
 package com.example.wtwear
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -16,6 +17,10 @@ class WeatherFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_weather, container, false)
+
+        val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE)
+        val unitPref = sharedPref?.getString("unit", "metric")
+        Log.d("Current Unit Test:", unitPref.toString())
 
         val temperature = view.findViewById<TextView>(R.id.temperatureText)
         val feelsLike = view.findViewById<TextView>(R.id.feelsLikeText)
@@ -35,17 +40,25 @@ class WeatherFragment : Fragment() {
         userViewModel.weather.observe(viewLifecycleOwner) {
             Log.d("userViewModel Test Weather:", it.toString())
 
-            temperature.text = it.temperature.toString()
-            feelsLike.text = it.feelsLike.toString()
+            if (unitPref == "metric") {
+                temperature.text = it.temperature.toString()
+                feelsLike.text = it.feelsLike.toString()
 
-            precipitation.text = it.precipitation.toString()
+                precipitation.text = it.precipitation.toString()
+                windSpeed.text = it.wind.toString()
+            } else if (unitPref == "imperial") {
+                temperature.text = celsiusToFahrenheit(it.temperature).toString()
+                feelsLike.text = celsiusToFahrenheit(it.feelsLike).toString()
+
+                precipitation.text = mmToInches(it.precipitation).toString()
+                windSpeed.text = cmToInches(it.wind).toString()
+            }
             uvIndex.text = it.uvIndex.toString()
 
             humidity.text = it.humidity.toString()
             pressure.text = it.pressure.toString()
 
             cloudCover.text = it.cloudCover.toString()
-            windSpeed.text = it.wind.toString()
 
             windDegree.text = it.windDegree.toString()
             windDirection.text = it.windDir

@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.RadioGroup
+import androidx.appcompat.widget.SwitchCompat
 
 class SettingsFragment : Fragment() {
 
@@ -23,7 +24,11 @@ class SettingsFragment : Fragment() {
         val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE)
         val editPref = sharedPref?.edit()
 
+
         val genderRadio = view.findViewById<RadioGroup>(R.id.genderRadioGroup)
+        //val checkedGender = genderRadio.checkedRadioButtonId
+        //val genderButton = view.findViewById<Button>(checkedGender)
+
         val applyButton = view.findViewById<Button>(R.id.applyButton)
 
         userViewModel.user.observe(viewLifecycleOwner) {
@@ -41,8 +46,17 @@ class SettingsFragment : Fragment() {
                     gender = "f"
                 }
 
+                val unitSwitch = view.findViewById<SwitchCompat>(R.id.unitsSwitch)
+
                 editPref?.apply {
                     putString("gender", gender)
+
+                    if (!unitSwitch.isChecked) {
+                        putString("unit", "metric")
+                    } else {
+                        putString("unit", "imperial")
+                    }
+
                     apply()
                 }
 

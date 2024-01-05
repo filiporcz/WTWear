@@ -139,6 +139,9 @@
             setContentView(R.layout.activity_main)
 
             Log.d("CHANGING:", "Now on main layout")
+
+            //val sharedPref = getPreferences(MODE_PRIVATE)
+            //Log.d("Current Unit Test:", sharedPref.getString("unit", "metric").toString())
             //fetchLocation()
             //Log.d("LATITUDE:", latitude.toString())
             //Log.d("LONGITUDE:", longitude.toString())

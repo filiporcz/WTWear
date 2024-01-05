@@ -1,5 +1,6 @@
 package com.example.wtwear
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -26,9 +27,18 @@ class HomeFragment : Fragment() {
         val temperature = view.findViewById<TextView>(R.id.temperatureText)
         val feelsLike = view.findViewById<TextView>(R.id.feelsLikeText)
 
+        val sharedPref = activity?.getPreferences(Context.MODE_PRIVATE)
+        val unitPref = sharedPref?.getString("unit", "metric")
+        Log.d("Current Unit Test:", unitPref.toString())
+
         userViewModel.weather.observe(viewLifecycleOwner) {
-            temperature.text = it.temperature.toString()
-            feelsLike.text = it.feelsLike.toString()
+            if (unitPref == "metric") {
+                temperature.text = it.temperature.toString()
+                feelsLike.text = it.feelsLike.toString()
+            } else if (unitPref == "imperial") {
+                temperature.text = celsiusToFahrenheit(it.temperature).toString()
+                feelsLike.text = celsiusToFahrenheit(it.feelsLike).toString()
+            }
         }
 
         val hatImage = view.findViewById<ImageView>(R.id.hatImage)
