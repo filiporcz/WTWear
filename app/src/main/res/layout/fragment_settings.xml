@@ -42,13 +42,27 @@
             android:orientation="horizontal">
 
             <RadioButton
-                android:id="@+id/maleRadioButton"
+                android:id="@+id/neutralRadioButton"
                 android:layout_width="120dp"
                 android:layout_height="40dp"
 
                 android:background="@drawable/custom_button"
                 android:button="@null"
                 android:checked="true"
+                android:gravity="center"
+                android:text="Neutral"
+                android:textColor="@color/white"
+                android:textSize="@dimen/radio_button_text_size"
+                android:textStyle="bold" />
+
+            <RadioButton
+                android:id="@+id/maleRadioButton"
+                android:layout_width="120dp"
+                android:layout_height="40dp"
+
+                android:background="@drawable/custom_button"
+                android:button="@null"
+                android:checked="false"
                 android:gravity="center"
                 android:text="Male"
                 android:textColor="@color/white"
@@ -220,4 +234,10 @@
                 android:theme="@style/genderSwitch"/>
         </RelativeLayout>
     </LinearLayout>
+
+    <Button
+        android:id="@+id/applyButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Apply" />
 </LinearLayout>

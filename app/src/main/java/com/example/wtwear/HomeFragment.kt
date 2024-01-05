@@ -8,7 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.lifecycle.Observer
 
 class HomeFragment : Fragment() {
 
@@ -27,10 +26,10 @@ class HomeFragment : Fragment() {
         val temperature = view.findViewById<TextView>(R.id.temperatureText)
         val feelsLike = view.findViewById<TextView>(R.id.feelsLikeText)
 
-        userViewModel.weather.observe(viewLifecycleOwner, Observer {
+        userViewModel.weather.observe(viewLifecycleOwner) {
             temperature.text = it.temperature.toString()
             feelsLike.text = it.feelsLike.toString()
-        })
+        }
 
         val hatImage = view.findViewById<ImageView>(R.id.hatImage)
         val topImage = view.findViewById<ImageView>(R.id.topImage)
@@ -49,7 +48,7 @@ class HomeFragment : Fragment() {
         val leftButton4 = view.findViewById<ImageView>(R.id.leftButton4)
         val rightButton4 = view.findViewById<ImageView>(R.id.rightButton4)
 
-        userViewModel.clothes.observe(viewLifecycleOwner, Observer {
+        userViewModel.clothes.observe(viewLifecycleOwner) {
             Log.d("userViewModel Test Clothes:", it.toString())
 
             val hat = it.hat
@@ -77,6 +76,11 @@ class HomeFragment : Fragment() {
             changeClothingXMLImage(trousersImage, trousersImages)
             changeClothingXMLImage(shoesImage, shoesImages)
 
+            Log.d("Test Descriptions Hat:", hatDescriptions.toString())
+            Log.d("Test Descriptions Top:", topDescriptions.toString())
+            Log.d("Test Descriptions Trousers:", trousersDescriptions.toString())
+            Log.d("Test Descriptions Shoes:", shoesDescriptions.toString())
+
             changeClothingXMLDescription(hatImage, hatDescriptions)
             changeClothingXMLDescription(topImage, topDescriptions)
             changeClothingXMLDescription(trousersImage, trousersDescriptions)
@@ -91,7 +95,7 @@ class HomeFragment : Fragment() {
             setClickListenerForPopup(topImage)
             setClickListenerForPopup(trousersImage)
             setClickListenerForPopup(shoesImage)
-        })
+        }
 
         //setOnClickListenerForImage(leftButton1, rightButton1, hatImage, hatImages)
         //setOnClickListenerForImage(leftButton2, rightButton2, topImage, coatImages)

@@ -46,6 +46,7 @@
     import kotlinx.coroutines.Dispatchers
     import kotlinx.coroutines.GlobalScope
     import kotlinx.coroutines.launch
+    import kotlinx.coroutines.withContext
 
     val exceptionHandler = CoroutineExceptionHandler{ _, throwable->
         Log.d("ERROR FROM EXCEPTION HANDLER:", "$throwable")
@@ -78,6 +79,7 @@
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
+            val sharedPref = getPreferences(MODE_PRIVATE)
             userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
 
             Log.d("CHANGING", "Switching to loading screen")
@@ -102,9 +104,9 @@
                 fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
                     if (location != null) {
                          userViewModel.initOrUpdate(
-                            location.latitude,
-                            location.longitude,
-                            "m"
+                            location.latitude.toString(),
+                            location.longitude.toString(),
+                            sharedPref.getString("gender", null)
                         )
 
                         userViewModel.user.observe(this, Observer {
@@ -112,8 +114,10 @@
                             lifecycleScope.launch(Dispatchers.IO + exceptionHandler) {
                                 userViewModel.weather.postValue(it.weatherInfo())
                                 userViewModel.clothes.postValue(it.clothes())
+                                withContext(Dispatchers.Main) {
+                                    this@MainActivity.showMainLayout()
+                                }
                             }
-                            showMainLayout()
                         })
 
                         Log.d(
@@ -150,17 +154,6 @@
             userViewModel.user.observe(this, Observer {
                 Log.d("userViewModel Test 2 User:", it.toString())
             })
-
-            //userViewModel.weather.observe(this, Observer {
-            //    Log.d("userViewModel Test Weather:", it.toString())
-            //})
-            //userViewModel.weather.observe(this, Observer {
-            //    Log.d("userViewModel Test 2 Weather:", it.toString())
-            //})
-
-            //userViewModel.clothes.observe(this, Observer {
-            //    Log.d("userViewModel Test 2 Clothes:", it.toString())
-            //})
 
             bottomNavigationView = findViewById(R.id.bottomNavigationView)
 
@@ -219,6 +212,10 @@
                 }
             }
         }
+
+        //private fun retrievePreferences() {
+        //    val gender = sharedPref.getString("gender", null)
+        //}
 
         private fun setOnClickListenerForImage(
             button: ImageView,

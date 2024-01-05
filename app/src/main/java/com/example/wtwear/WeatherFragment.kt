@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import androidx.lifecycle.Observer
 
 class WeatherFragment : Fragment() {
 
@@ -33,7 +32,7 @@ class WeatherFragment : Fragment() {
         val windDegree = view.findViewById<TextView>(R.id.windDegreeImage)
         val windDirection = view.findViewById<TextView>(R.id.windDirectionImage)
 
-        userViewModel.weather.observe(viewLifecycleOwner, Observer {
+        userViewModel.weather.observe(viewLifecycleOwner) {
             Log.d("userViewModel Test Weather:", it.toString())
 
             temperature.text = it.temperature.toString()
@@ -50,7 +49,7 @@ class WeatherFragment : Fragment() {
 
             windDegree.text = it.windDegree.toString()
             windDirection.text = it.windDir
-        })
+        }
 
         return view
     }
