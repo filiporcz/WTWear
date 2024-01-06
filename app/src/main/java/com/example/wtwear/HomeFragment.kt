@@ -33,11 +33,15 @@ class HomeFragment : Fragment() {
 
         userViewModel.weather.observe(viewLifecycleOwner) {
             if (unitPref == "metric") {
-                temperature.text = it.temperature.toString()
-                feelsLike.text = it.feelsLike.toString()
+                val temperatureText = "${it.temperature}°C"
+                temperature.text = temperatureText
+                val feelsLikeText = "Feels like: ${it.feelsLike}°C"
+                feelsLike.text = feelsLikeText
             } else if (unitPref == "imperial") {
-                temperature.text = celsiusToFahrenheit(it.temperature).toString()
-                feelsLike.text = celsiusToFahrenheit(it.feelsLike).toString()
+                val temperatureText = "${celsiusToFahrenheit(it.temperature)}°F"
+                temperature.text = temperatureText
+                val feelsLikeText = "Feels like: ${celsiusToFahrenheit(it.feelsLike)}°F"
+                feelsLike.text = feelsLikeText
             }
         }
 

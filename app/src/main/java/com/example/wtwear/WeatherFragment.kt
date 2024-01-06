@@ -1,5 +1,6 @@
 package com.example.wtwear
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -41,27 +42,40 @@ class WeatherFragment : Fragment() {
             Log.d("userViewModel Test Weather:", it.toString())
 
             if (unitPref == "metric") {
-                temperature.text = it.temperature.toString()
-                feelsLike.text = it.feelsLike.toString()
+                val temperatureText = "${it.temperature}°C"
+                temperature.text = temperatureText
+                val feelsLikeText = "Feels like: ${it.feelsLike}°C"
+                feelsLike.text = feelsLikeText
 
-                precipitation.text = it.precipitation.toString()
-                windSpeed.text = it.wind.toString()
+                val precipitationText = "${it.precipitation} mm"
+                precipitation.text = precipitationText
+                val windSpeedText = "${it.wind} km/h"
+                windSpeed.text = windSpeedText
             } else if (unitPref == "imperial") {
-                temperature.text = celsiusToFahrenheit(it.temperature).toString()
-                feelsLike.text = celsiusToFahrenheit(it.feelsLike).toString()
+                val temperatureText = "${celsiusToFahrenheit(it.temperature)}°F"
+                temperature.text = temperatureText
+                val feelsLikeText = "Feels like: ${celsiusToFahrenheit(it.feelsLike)}°F"
+                feelsLike.text = feelsLikeText
 
-                precipitation.text = mmToInches(it.precipitation).toString()
-                windSpeed.text = kmhToMph(it.wind).toString()
+                val precipitationText = "${mmToInches(it.precipitation)}\""
+                precipitation.text = precipitationText
+                val windSpeedText = "${kmhToMph(it.wind)} mph"
+                windSpeed.text = windSpeedText
             }
 
-            uvIndex.text = it.uvIndex.toString()
+            val uvIndexText = "${it.uvIndex}/11"
+            uvIndex.text = uvIndexText
 
-            humidity.text = it.humidity.toString()
-            pressure.text = it.pressure.toString()
+            val humidityText = "${it.humidity}%"
+            humidity.text = humidityText
+            val pressureText = "${it.pressure} hPa"
+            pressure.text = pressureText
 
-            cloudCover.text = it.cloudCover.toString()
+            val cloudCoverText = "${it.cloudCover}%"
+            cloudCover.text = cloudCoverText
 
-            windDegree.text = it.windDegree.toString()
+            val windDegreeText = "${it.windDegree}°"
+            windDegree.text = windDegreeText
             windDirection.text = it.windDir
         }
 
