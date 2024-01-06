@@ -129,10 +129,6 @@
                     }
                 }
             }
-            //replaceFragment(LoadingScreen())
-            // Delay switching to the main layout
-            //Handler().postDelayed({
-            //}, 3000) // 3000 milliseconds (3 seconds)
 
             fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         }
