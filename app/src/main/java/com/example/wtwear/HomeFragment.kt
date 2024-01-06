@@ -129,18 +129,25 @@ class HomeFragment : Fragment() {
             clothing.setImageResource(android.R.color.transparent)
         } else {
             clothing.setImageResource(clothes[0])
+            // Save the resource ID as a tag for getting the image ID later
+            clothing.tag = clothes[0]
         }
     }
 
-    private fun changeClothingXMLDescription(clothing: ImageView, clothes: List<String?>) {
-        if (clothes.isEmpty() or (clothes[0].isNullOrEmpty())) {
+    private fun changeClothingXMLDescription(clothing: ImageView, descriptions: List<String?>) {
+        if (descriptions.isEmpty() or (descriptions[0].isNullOrEmpty())) {
             clothing.contentDescription = "No description"
         } else {
-            clothing.contentDescription = clothes[0]
+            clothing.contentDescription = descriptions[0]
         }
     }
 
-    private fun setOnClickListenerForImage(leftButton: ImageView, rightButton: ImageView, middleImage: ImageView, imageList: List<Int>) {
+    private fun setOnClickListenerForImage(
+        leftButton: ImageView,
+        rightButton: ImageView,
+        middleImage: ImageView,
+        imageList: List<Int>,
+    ) {
         leftButton.setOnClickListener {
             rotateImage(middleImage, imageList, backward = true)
         }
@@ -149,9 +156,16 @@ class HomeFragment : Fragment() {
             rotateImage(middleImage, imageList, backward = false)
         }
     }
-    private fun rotateImage(middleImage: ImageView, imageList: List<Int>, backward: Boolean) {
+
+    private fun rotateImage(
+        middleImage: ImageView,
+        imageList: List<Int>,
+        backward: Boolean) {
         // Get the current index of the middle image
-        val currentIndex = middleImage.tag as? Int ?: 0
+        val currentRes = middleImage.tag as? Int ?: 0
+        val currentIndex = imageList.indexOf(currentRes)
+        //val currentIndex = imageList.indexOf(currentImage)
+        Log.d("Test rotateImage tag", currentIndex.toString())
 
         // Calculate the new index based on the rotation direction
         val newIndex = if (backward) {
@@ -164,7 +178,7 @@ class HomeFragment : Fragment() {
         middleImage.setImageResource(imageList[newIndex])
 
         // Save the new index as a tag for the middle image
-        middleImage.tag = newIndex
+        //middleImage.tag = newIndex
 
         // Save the resource ID as a tag for the middle image
         middleImage.tag = imageList[newIndex]
@@ -173,6 +187,9 @@ class HomeFragment : Fragment() {
         imageView.setOnClickListener {
             // Get the drawable resource ID from the tag of the clicked ImageView
             val imageResource = imageView.tag as? Int ?: 0
+            Log.d("Test imageResource tag", imageResource.toString())
+
+            // Get the resource description from the tag of the clicked ImageView
             val descriptionResource = imageView.contentDescription
 
             // Create an instance of the PopUpFragment with the selected drawable resource ID

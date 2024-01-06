@@ -13,7 +13,6 @@ import android.widget.RadioGroup
 import androidx.appcompat.widget.SwitchCompat
 
 class SettingsFragment : Fragment() {
-
     @SuppressLint("CommitPrefEdits")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -54,11 +53,16 @@ class SettingsFragment : Fragment() {
                 val checkedGender = genderRadio.checkedRadioButtonId
                 val genderButton = view.findViewById<Button>(checkedGender)
 
-                var gender: String? = null
-                if (genderButton.id == R.id.maleRadioButton) {
-                    gender = "m"
-                } else if (genderButton.id == R.id.femaleRadioButton) {
-                    gender = "f"
+                val gender = when (genderButton.id) {
+                    R.id.maleRadioButton -> {
+                        "m"
+                    }
+                    R.id.femaleRadioButton -> {
+                        "f"
+                    }
+                    else -> {
+                        null
+                    }
                 }
 
                 //val unitSwitch = view.findViewById<SwitchCompat>(R.id.unitsSwitch)
