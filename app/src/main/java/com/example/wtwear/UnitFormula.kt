@@ -13,7 +13,3 @@ fun kmhToMph(kmh: Int): Int {
 fun mmToInches(mm: Double): Double {
     return mm / 2.54
 }
-
-fun cmToInches(cm: Int): Double {
-    return cm / 2.54
-}

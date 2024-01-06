@@ -65,8 +65,6 @@ class SettingsFragment : Fragment() {
                     }
                 }
 
-                //val unitSwitch = view.findViewById<SwitchCompat>(R.id.unitsSwitch)
-
                 editPref?.apply {
                     putString("gender", gender)
 

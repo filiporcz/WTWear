@@ -129,8 +129,7 @@ class HomeFragment : Fragment() {
             clothing.setImageResource(android.R.color.transparent)
         } else {
             clothing.setImageResource(clothes[0])
-            // Save the resource ID as a tag for getting the image ID later
-            clothing.tag = clothes[0]
+            clothing.tag = clothes[0] // Save the resource ID as a tag for getting the image ID later
         }
     }
 
