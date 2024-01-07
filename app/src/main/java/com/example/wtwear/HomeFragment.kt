@@ -100,10 +100,10 @@ class HomeFragment : Fragment() {
             changeClothingXMLDescription(trousersImage, trousersDescriptions)
             changeClothingXMLDescription(shoesImage, shoesDescriptions)
 
-            setOnClickListenerForImage(leftButton1, rightButton1, hatImage, hatImages)
-            setOnClickListenerForImage(leftButton2, rightButton2, topImage, topImages)
-            setOnClickListenerForImage(leftButton3, rightButton3, trousersImage, trousersImages)
-            setOnClickListenerForImage(leftButton4, rightButton4, shoesImage, shoesImages)
+            setOnClickListenerForImage(leftButton1, rightButton1, hatImage, hatImages, hatDescriptions)
+            setOnClickListenerForImage(leftButton2, rightButton2, topImage, topImages, topDescriptions)
+            setOnClickListenerForImage(leftButton3, rightButton3, trousersImage, trousersImages, trousersDescriptions)
+            setOnClickListenerForImage(leftButton4, rightButton4, shoesImage, shoesImages, shoesDescriptions)
 
             setClickListenerForPopup(hatImage)
             setClickListenerForPopup(topImage)
@@ -150,20 +150,23 @@ class HomeFragment : Fragment() {
         rightButton: ImageView,
         middleImage: ImageView,
         imageList: List<Int>,
+        descriptionList: List<String?>
     ) {
         leftButton.setOnClickListener {
-            rotateImage(middleImage, imageList, backward = true)
+            rotateImage(middleImage, imageList, descriptionList, backward = true)
         }
 
         rightButton.setOnClickListener {
-            rotateImage(middleImage, imageList, backward = false)
+            rotateImage(middleImage, imageList, descriptionList, backward = false)
         }
     }
 
     private fun rotateImage(
         middleImage: ImageView,
         imageList: List<Int>,
-        backward: Boolean) {
+        descriptionList: List<String?>,
+        backward: Boolean
+    ) {
         // Get the current index of the middle image
         val currentRes = middleImage.tag as? Int ?: 0
         val currentIndex = imageList.indexOf(currentRes)
@@ -179,9 +182,7 @@ class HomeFragment : Fragment() {
 
         // Update the middle image with the new resource
         middleImage.setImageResource(imageList[newIndex])
-
-        // Save the new index as a tag for the middle image
-        //middleImage.tag = newIndex
+        middleImage.contentDescription = descriptionList[newIndex]
 
         // Save the resource ID as a tag for the middle image
         middleImage.tag = imageList[newIndex]
