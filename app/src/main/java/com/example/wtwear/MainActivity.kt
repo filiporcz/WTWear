@@ -82,14 +82,11 @@
             val sharedPref = getPreferences(MODE_PRIVATE)
             userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
 
-            Log.d("CHANGING", "Switching to loading screen")
-            setContentView(R.layout.loading_screen)
-            val button = findViewById<Button>(R.id.button)
-
-            if (//ActivityCompat.checkSelfPermission(
-                //    this,
-                //    Manifest.permission.ACCESS_FINE_LOCATION
-                //) != PackageManager.PERMISSION_GRANTED &&
+            fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+            while (//ActivityCompat.checkSelfPermission(
+            //    this,
+            //    Manifest.permission.ACCESS_FINE_LOCATION
+            //) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(
                     this,
                     Manifest.permission.ACCESS_COARSE_LOCATION
@@ -102,45 +99,85 @@
                 )
             }
 
-            button.setOnClickListener {
-                fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
-                    if (location != null) {
-                         userViewModel.initOrUpdate(
-                            location.latitude.toString(),
-                            location.longitude.toString(),
-                            sharedPref.getString("gender", null)
-                        )
+            Log.d("CHANGING", "Switching to loading screen")
+            setContentView(R.layout.loading_screen)
 
-                        userViewModel.user.observe(this, Observer {
-                            Log.d("userViewModel Test User:", it.toString())
+            fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
+                if (location != null) {
+                    userViewModel.initOrUpdate(
+                        location.latitude.toString(),
+                        location.longitude.toString(),
+                        sharedPref.getString("gender", null)
+                    )
 
-                            lifecycleScope.launch(Dispatchers.IO + exceptionHandler) {
-                                Log.d("userViewModel test assign:", "initializing weather")
-                                userViewModel.weather.postValue(it.weatherInfo())
-                                Log.d("userViewModel test assign:", "initializing clothes")
-                                userViewModel.clothes.postValue(it.clothes())
-                                Log.d("userViewModel test assign:", "initializing clothes successful")
+                    userViewModel.user.observe(this, Observer {
+                        Log.d("userViewModel Test User:", it.toString())
 
-                                withContext(Dispatchers.Main) {
-                                    //
-                                    Log.d("CHANGING:", "Going to main layout")
-                                    showMainLayout()
-                                }
+                        lifecycleScope.launch(Dispatchers.IO + exceptionHandler) {
+                            Log.d("userViewModel test assign:", "initializing weather")
+                            userViewModel.weather.postValue(it.weatherInfo())
+                            Log.d("userViewModel test assign:", "initializing clothes")
+                            userViewModel.clothes.postValue(it.clothes())
+                            Log.d("userViewModel test assign:", "initializing clothes successful")
+
+                            withContext(Dispatchers.Main) {
+                                //
+                                Log.d("CHANGING:", "Going to main layout")
+                                showMainLayout()
                             }
-                        })
-                        // REPLACE THE ONE ON withContext ABOVE WITH THIS IF IT DOES NOT GO PAST LOADING SCREEN
-                        //Log.d("CHANGING:", "Going to main layout")
-                        //showMainLayout()
+                        }
+                    })
+                    // REPLACE THE ONE ON withContext ABOVE WITH THIS IF IT DOES NOT GO PAST LOADING SCREEN
+                    //Log.d("CHANGING:", "Going to main layout")
+                    //showMainLayout()
 
-                        Log.d(
-                            "lastLocation RESULT:",
-                            "LATITUDE: ${location.latitude}, LONGITUDE: ${location.longitude}"
-                        )
-                    }
+                    Log.d(
+                        "lastLocation RESULT:",
+                        "LATITUDE: ${location.latitude}, LONGITUDE: ${location.longitude}"
+                    )
                 }
             }
 
-            fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+            //val button = findViewById<Button>(R.id.button)
+
+            //button.setOnClickListener {
+            //    fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
+            //        if (location != null) {
+            //             userViewModel.initOrUpdate(
+            //                location.latitude.toString(),
+            //                location.longitude.toString(),
+            //                sharedPref.getString("gender", null)
+            //            )
+
+            //            userViewModel.user.observe(this, Observer {
+            //                Log.d("userViewModel Test User:", it.toString())
+
+            //                lifecycleScope.launch(Dispatchers.IO + exceptionHandler) {
+            //                    Log.d("userViewModel test assign:", "initializing weather")
+            //                    userViewModel.weather.postValue(it.weatherInfo())
+            //                    Log.d("userViewModel test assign:", "initializing clothes")
+            //                    userViewModel.clothes.postValue(it.clothes())
+            //                    Log.d("userViewModel test assign:", "initializing clothes successful")
+
+            //                    withContext(Dispatchers.Main) {
+            //                        //
+            //                        Log.d("CHANGING:", "Going to main layout")
+            //                        showMainLayout()
+            //                    }
+            //                }
+            //            })
+            //            // REPLACE THE ONE ON withContext ABOVE WITH THIS IF IT DOES NOT GO PAST LOADING SCREEN
+            //            //Log.d("CHANGING:", "Going to main layout")
+            //            //showMainLayout()
+
+            //            Log.d(
+            //                "lastLocation RESULT:",
+            //                "LATITUDE: ${location.latitude}, LONGITUDE: ${location.longitude}"
+            //            )
+            //        }
+            //    }
+            //}
+
         }
 
         private fun showMainLayout() {
