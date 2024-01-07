@@ -12,10 +12,8 @@ import com.example.wtwear.backend.supabase.database
 import org.ktorm.entity.toList
 
 data class User(
-    //val latitude: String,
-    //val longitude: String,
-    val city: String,
-    val country: String,
+    val city: String, // Interchangeable with latitude
+    val country: String, // Interchangeable with longitude
     val gender: String?
 ) {
     private val weather = fetchWSData(city, country)
@@ -47,6 +45,10 @@ data class Clothes(
     val trousers: List<Clothing>,
     val shoes: List<Clothing>
 ) {
+    fun titles(type: List<Clothing>): List<String> {
+        return type.map { it.clothing_name }
+    }
+
     fun images(type: List<Clothing>): List<String?> {
         return type.map { it.image }
     }

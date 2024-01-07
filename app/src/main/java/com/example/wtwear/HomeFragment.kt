@@ -70,6 +70,11 @@ class HomeFragment : Fragment() {
             val trousers = it.trousers
             val shoes = it.shoes
 
+            val hatTitles = it.titles(hat)
+            val topTitles = it.titles(top)
+            val trousersTitles= it.titles(trousers)
+            val shoesTitles = it.titles(shoes)
+
             val hatImages = imageToXMLTag(it.images(hat))
             val topImages = imageToXMLTag(it.images(top))
             val trousersImages = imageToXMLTag(it.images(trousers))
@@ -95,10 +100,10 @@ class HomeFragment : Fragment() {
             Log.d("Test Descriptions Trousers:", trousersDescriptions.toString())
             Log.d("Test Descriptions Shoes:", shoesDescriptions.toString())
 
-            changeClothingXMLDescription(hatImage, hatDescriptions)
-            changeClothingXMLDescription(topImage, topDescriptions)
-            changeClothingXMLDescription(trousersImage, trousersDescriptions)
-            changeClothingXMLDescription(shoesImage, shoesDescriptions)
+            changeClothingXMLDescription(hatImage, hatDescriptions, 0)
+            changeClothingXMLDescription(topImage, topDescriptions, 0)
+            changeClothingXMLDescription(trousersImage, trousersDescriptions, 0)
+            changeClothingXMLDescription(shoesImage, shoesDescriptions, 0)
 
             setOnClickListenerForImage(leftButton1, rightButton1, hatImage, hatImages, hatDescriptions)
             setOnClickListenerForImage(leftButton2, rightButton2, topImage, topImages, topDescriptions)
@@ -137,11 +142,11 @@ class HomeFragment : Fragment() {
         }
     }
 
-    private fun changeClothingXMLDescription(clothing: ImageView, descriptions: List<String?>) {
-        if (descriptions.isEmpty() or (descriptions[0].isNullOrEmpty())) {
+    private fun changeClothingXMLDescription(clothing: ImageView, descriptions: List<String?>, index: Int) {
+        if (descriptions.isEmpty() or (descriptions[index].isNullOrEmpty())) {
             clothing.contentDescription = "No description"
         } else {
-            clothing.contentDescription = descriptions[0]
+            clothing.contentDescription = descriptions[index]
         }
     }
 
@@ -182,7 +187,7 @@ class HomeFragment : Fragment() {
 
         // Update the middle image with the new resource
         middleImage.setImageResource(imageList[newIndex])
-        middleImage.contentDescription = descriptionList[newIndex]
+        changeClothingXMLDescription(middleImage, descriptionList, newIndex)
 
         // Save the resource ID as a tag for the middle image
         middleImage.tag = imageList[newIndex]
