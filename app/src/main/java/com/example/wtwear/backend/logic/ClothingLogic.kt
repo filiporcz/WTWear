@@ -8,6 +8,12 @@ import org.ktorm.dsl.isNull
 import org.ktorm.dsl.or
 import org.ktorm.entity.EntitySequence
 import org.ktorm.entity.filter
+import org.ktorm.expression.ArgumentExpression
+import org.ktorm.expression.FunctionExpression
+import org.ktorm.schema.ColumnDeclaring
+import org.ktorm.schema.IntSqlType
+import org.ktorm.schema.VarcharSqlType
+import org.ktorm.support.postgresql.ilike
 
 fun matchClothesWeather(
     clothes: EntitySequence<Clothing, Clothings>,
@@ -16,9 +22,9 @@ fun matchClothesWeather(
     windName: String?
 ): EntitySequence<Clothing, Clothings> {
     return clothes
-        .filter { it.temp_name eq tempName!! or (it.temp_name.isNull() or (it.temp_name eq "")) and
-                (it.precip_name eq precipName!! or (it.precip_name.isNull() or (it.precip_name eq ""))) and
-                (it.wind_name eq windName!! or (it.wind_name.isNull() or (it.wind_name eq ""))) }
+        .filter { it.temp_name.ilike("%${tempName!!}%") or (it.temp_name.isNull() or (it.temp_name eq "")) and
+                (it.precip_name.ilike("%${precipName!!}%") or (it.precip_name.isNull() or (it.precip_name eq ""))) and
+                (it.wind_name.ilike("%${windName}%") or (it.wind_name.isNull() or (it.wind_name eq ""))) }
 }
 
 fun matchClothesGender(

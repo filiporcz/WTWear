@@ -113,14 +113,22 @@
                             Log.d("userViewModel Test User:", it.toString())
 
                             lifecycleScope.launch(Dispatchers.IO + exceptionHandler) {
+                                Log.d("userViewModel test assign:", "initializing weather")
                                 userViewModel.weather.postValue(it.weatherInfo())
+                                Log.d("userViewModel test assign:", "initializing clothes")
                                 userViewModel.clothes.postValue(it.clothes())
+                                Log.d("userViewModel test assign:", "initializing clothes successful")
 
                                 withContext(Dispatchers.Main) {
+                                    //
+                                    Log.d("CHANGING:", "Going to main layout")
                                     showMainLayout()
                                 }
                             }
                         })
+                        // REPLACE THE ONE ON withContext ABOVE WITH THIS IF IT DOES NOT GO PAST LOADING SCREEN
+                        //Log.d("CHANGING:", "Going to main layout")
+                        //showMainLayout()
 
                         Log.d(
                             "lastLocation RESULT:",
