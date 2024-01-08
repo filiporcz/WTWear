@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.RadioButton
 import android.widget.RadioGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import com.google.android.material.textfield.TextInputEditText
@@ -108,6 +109,7 @@ class SettingsFragment : Fragment() {
                     }
                 }
 
+                (activity as AppCompatActivity).supportActionBar?.title = "${savedLocation.city}, ${savedLocation.country}"
                 if (!locationSwitch.isChecked
                     and !inputCountry.text.isNullOrEmpty()
                     and !inputCity.text.isNullOrEmpty()
@@ -118,7 +120,7 @@ class SettingsFragment : Fragment() {
                         } else {
                             null
                         }
-                    }
+                    }.filterNotNull()
                     Log.d("input country matches Test", matchedCountries.toString())
 
                     val matchedCities = sampleCities.city.mapIndexed { index, value ->
@@ -127,13 +129,12 @@ class SettingsFragment : Fragment() {
                         } else {
                             null
                         }
-                    }
+                    }.filterNotNull()
                     Log.d("input city matches Test", matchedCities.toString())
-                    Log.d("input country not null Test", matchedCountries.filterNotNull().toString())
 
-                    if (matchedCountries.filterNotNull().isNotEmpty()) {
-                        val matchedBoth = matchedCities.find { value ->
-                            value == matchedCountries.filterNotNull()[0]
+                    if (matchedCountries.isNotEmpty() and matchedCities.isNotEmpty()) {
+                        val matchedBoth = matchedCountries.find { value ->
+                            value == matchedCities[0]
                         }
                         Log.d("input country and city match Test", matchedBoth.toString())
 
@@ -144,6 +145,8 @@ class SettingsFragment : Fragment() {
                             locationUserInput = false
                             savedInputCountry = inputCountry.text.toString()
                             savedInputCity = inputCity.text.toString()
+
+                            (activity as AppCompatActivity).supportActionBar?.title = "$savedInputCity, $savedInputCountry"
 
                             Log.d("new latitude Test", latitude)
                             Log.d("new longitude Test", longitude)

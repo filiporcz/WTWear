@@ -1,52 +1,24 @@
     package com.example.wtwear
 
-    import android.graphics.Color
     import android.os.Bundle
-    import android.os.Handler
-    import android.view.View
-    import android.widget.EditText
-    import android.widget.TextView
-    import android.widget.Toast
     import androidx.appcompat.app.AppCompatActivity
     import androidx.fragment.app.Fragment
-    import com.android.volley.Request
-    import com.android.volley.RequestQueue
-    import com.android.volley.toolbox.StringRequest
-    import com.android.volley.toolbox.Volley
     import com.google.android.material.bottomnavigation.BottomNavigationView
-    import org.json.JSONArray
-    import org.json.JSONException
-    import org.json.JSONObject
-    import java.text.DecimalFormat
-    import io.github.jan.supabase.createSupabaseClient
-    import io.github.jan.supabase.postgrest.Postgrest
     import android.Manifest
-    import android.annotation.SuppressLint
     import android.content.pm.PackageManager
-    import android.location.LocationManager
+    import android.location.Geocoder
     import android.util.Log
-    import android.widget.Button
-    import androidx.activity.result.contract.ActivityResultContracts
     import androidx.core.app.ActivityCompat
-    import com.google.android.gms.common.api.ResolvableApiException
-    import com.google.android.gms.location.LocationRequest
-    import com.google.android.gms.location.LocationSettingsRequest
-    import com.google.android.gms.location.Priority
-    import com.google.android.gms.tasks.CancellationTokenSource
+    import androidx.core.content.ContextCompat
     import com.google.android.gms.location.FusedLocationProviderClient
     import com.google.android.gms.location.LocationServices
-    import android.widget.ImageView
-    import androidx.lifecycle.Observer
     import androidx.lifecycle.ViewModelProvider
     import androidx.lifecycle.lifecycleScope
-    import com.example.wtwear.backend.data.User
-    import com.example.wtwear.backend.data.fetchWSData
-    import com.example.wtwear.backend.logic.matchTemp
     import kotlinx.coroutines.CoroutineExceptionHandler
     import kotlinx.coroutines.Dispatchers
-    import kotlinx.coroutines.GlobalScope
     import kotlinx.coroutines.launch
     import kotlinx.coroutines.withContext
+    import java.util.Locale
 
     val exceptionHandler = CoroutineExceptionHandler{ _, throwable->
         Log.d("ERROR FROM EXCEPTION HANDLER:", "$throwable")
@@ -55,20 +27,10 @@
 
     lateinit var userViewModel: UserViewModel
     lateinit var savedLocation: SavedLocation
+    lateinit var geocoder: Geocoder
 
     class MainActivity : AppCompatActivity() {
-        private var latitude: Double? = null
-        private var longitude: Double? = null
-
-        private lateinit var etCity: EditText
-        private lateinit var etCountry: EditText
-        private lateinit var tvResult: TextView
-        private val url = "https://api.openweathermap.org/data/2.5/weather"
-        private val appid = "32e60a591b19acc174f0c20a4610964f"
-        private val df = DecimalFormat("#.##")
-
         private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
-        private lateinit var locationText: String
 
         private lateinit var bottomNavigationView: BottomNavigationView
 
@@ -81,6 +43,8 @@
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
             val sharedPref = getPreferences(MODE_PRIVATE)
+            geocoder = Geocoder(this, Locale.getDefault())
+            supportActionBar?.hide()
             userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
 
             fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
@@ -111,12 +75,26 @@
                         sharedPref.getString("gender", null)
                     )
 
-                    savedLocation = SavedLocation(
-                        location.latitude.toString(),
-                        location.longitude.toString()
+                    supportActionBar?.setBackgroundDrawable(ContextCompat.getDrawable(this, R.color.ui2))
+                    supportActionBar?.elevation = 0.0f
+                    val addresses = geocoder.getFromLocation(
+                        location.latitude,
+                        location.longitude,
+                        1,
                     )
 
-                    userViewModel.user.observe(this, Observer {
+                    val cityName = addresses?.get(0)?.subAdminArea
+                    val countryCode = addresses?.get(0)?.countryCode
+                    supportActionBar?.title = "$cityName, $countryCode"
+
+                    savedLocation = SavedLocation(
+                        location.latitude.toString(),
+                        location.longitude.toString(),
+                        cityName,
+                        countryCode
+                    )
+
+                    userViewModel.user.observe(this) {
                         Log.d("userViewModel Test User:", it.toString())
 
                         lifecycleScope.launch(Dispatchers.IO + exceptionHandler) {
@@ -132,7 +110,7 @@
                                 showMainLayout()
                             }
                         }
-                    })
+                    }
                     // REPLACE THE ONE ON withContext ABOVE WITH THIS IF IT DOES NOT GO PAST LOADING SCREEN
                     //Log.d("CHANGING:", "Going to main layout")
                     //showMainLayout()
@@ -191,24 +169,13 @@
 
             Log.d("CHANGING:", "Now on main layout")
 
-            //val sharedPref = getPreferences(MODE_PRIVATE)
-            //Log.d("Current Unit Test:", sharedPref.getString("unit", "metric").toString())
-            //fetchLocation()
-            //Log.d("LATITUDE:", latitude.toString())
-            //Log.d("LONGITUDE:", longitude.toString())
-            //lifecycleScope.launch(Dispatchers.IO + exceptionHandler) {
-            //    val test = fetchWSData("Bristol", "UK")
-            //    Log.d("Weather", test.toString())
-            //    val test2 = matchTemp(10)
-            //    Log.d("Temp", test2.toString())
-            //    Log.d("userViewModel TEST 2:", userViewModel.getData().toString())
-            //    Log.d("userViewModel Weather TEST 2:", userViewModel.getData().weatherInfo().toString())
-            //}
-
-            userViewModel.user.observe(this, Observer {
+            userViewModel.user.observe(this) {
                 Log.d("userViewModel Test 2 User:", it.toString())
-            })
+            }
 
+            //toolBar = findViewById(R.id.toolbar)
+            //setSupportActionBar(toolBar)
+            supportActionBar?.show()
             bottomNavigationView = findViewById(R.id.bottomNavigationView)
 
             bottomNavigationView.setOnItemSelectedListener { menuItem ->
@@ -238,68 +205,34 @@
             supportFragmentManager.beginTransaction().replace(R.id.frame_layout, fragment).commit()
         }
 
-        private fun fetchLocation() {
-            //var latitude: Double? = null
-            //var longitude: Double? = null
+        //private fun fetchLocation() {
+        //    //var latitude: Double? = null
+        //    //var longitude: Double? = null
 
-            if (ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                ActivityCompat.requestPermissions(
-                    this,
-                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                    101
-                )
-                return
-            }
-            fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
-                if (location != null) {
-                    // Update the tvLocation TextView with the location information
-                    //val locationText = "${location.latitude}, ${location.longitude}"
-                    latitude = location.latitude
-                    longitude = location.longitude
-                }
-            }
-        }
-
-        //private fun retrievePreferences() {
-        //    val gender = sharedPref.getString("gender", null)
+        //    if (ActivityCompat.checkSelfPermission(
+        //            this,
+        //            Manifest.permission.ACCESS_FINE_LOCATION
+        //        ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+        //            this,
+        //            Manifest.permission.ACCESS_COARSE_LOCATION
+        //        ) != PackageManager.PERMISSION_GRANTED
+        //    ) {
+        //        ActivityCompat.requestPermissions(
+        //            this,
+        //            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+        //            101
+        //        )
+        //        return
+        //    }
+        //    fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
+        //        if (location != null) {
+        //            // Update the tvLocation TextView with the location information
+        //            //val locationText = "${location.latitude}, ${location.longitude}"
+        //            latitude = location.latitude
+        //            longitude = location.longitude
+        //        }
+        //    }
         //}
-
-        private fun setOnClickListenerForImage(
-            button: ImageView,
-            middleImage: ImageView,
-            imageList: List<Int>
-        ) {
-            button.setOnClickListener {
-                // Get the current index of the middle image
-                val currentIndex = imageList.indexOf(middleImage.tag as? Int ?: 0)
-
-                // Calculate the new index based on the button pressed
-                val newIndex = when (button.id) {
-                    R.id.leftButton1, R.id.leftButton2, R.id.leftButton3, R.id.leftButton4 -> {
-                        (currentIndex - 1 + imageList.size) % imageList.size
-                    }
-
-                    R.id.rightButton1, R.id.rightButton2, R.id.rightButton3, R.id.rightButton4 -> {
-                        (currentIndex + 1) % imageList.size
-                    }
-
-                    else -> currentIndex
-                }
-
-                // Update the middle image with the new resource
-                middleImage.setImageResource(imageList[newIndex])
-
-                // Save the new index as a tag for the middle image
-                middleImage.tag = newIndex
-            }
-        }
     }
 
         /*
