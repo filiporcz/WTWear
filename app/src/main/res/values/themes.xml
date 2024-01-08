@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.WTWear" parent="Theme.Material3.DayNight"></style>
+    <style name="Theme.WTWear" parent="Theme.Material3.DayNight.NoActionBar"></style>
     <style name="App.Custom.Indicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
         <item name="android:color">@color/ui2</item>
     </style>
