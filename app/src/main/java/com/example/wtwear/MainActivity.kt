@@ -54,6 +54,7 @@
     }
 
     lateinit var userViewModel: UserViewModel
+    lateinit var savedLocation: SavedLocation
 
     class MainActivity : AppCompatActivity() {
         private var latitude: Double? = null
@@ -108,6 +109,11 @@
                         location.latitude.toString(),
                         location.longitude.toString(),
                         sharedPref.getString("gender", null)
+                    )
+
+                    savedLocation = SavedLocation(
+                        location.latitude.toString(),
+                        location.longitude.toString()
                     )
 
                     userViewModel.user.observe(this, Observer {

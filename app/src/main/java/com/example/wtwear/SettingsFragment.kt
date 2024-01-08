@@ -3,6 +3,7 @@ package com.example.wtwear
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,8 @@ import android.widget.Button
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import androidx.appcompat.widget.SwitchCompat
+import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
+import com.google.android.material.textfield.TextInputEditText
 
 class SettingsFragment : Fragment() {
     @SuppressLint("CommitPrefEdits")
@@ -39,6 +42,43 @@ class SettingsFragment : Fragment() {
             }
         }
 
+        val locationSwitch = view.findViewById<SwitchCompat>(R.id.locationSwitch)
+        locationSwitch.isChecked = sharedPref?.getBoolean("location", true) == true
+
+        val inputCountry = view.findViewById<TextInputEditText>(R.id.countryText)
+        val inputCity = view.findViewById<TextInputEditText>(R.id.cityText)
+
+        var savedInputCountry = sharedPref?.getString("inputCountry", null)
+        var savedInputCity = sharedPref?.getString("inputCity", null)
+
+        inputCountry.setText(savedInputCountry)
+        inputCity.setText(savedInputCity)
+
+        if (locationSwitch.isChecked) { // During fragment startup
+            Log.d("location switch Test", "ON")
+            inputCountry.isEnabled = false
+            inputCity.isEnabled = false
+        } else {
+            Log.d("location switch Test", "OFF")
+            inputCountry.isEnabled = true
+            inputCity.isEnabled = true
+        }
+
+        locationSwitch.setOnCheckedChangeListener { _, isChecked -> // During button switch
+            if (isChecked) {
+                Log.d("location switch Test", "ON")
+                inputCountry.isEnabled = false
+                inputCity.isEnabled = false
+            } else {
+                Log.d("location switch Test", "OFF")
+                inputCountry.isEnabled = true
+                inputCity.isEnabled = true
+            }
+        }
+
+        val sampleCities = getWorldCities()
+        Log.d("Cities Test", sampleCities.toString())
+
         val unitSwitch = view.findViewById<SwitchCompat>(R.id.unitsSwitch)
         unitSwitch.isChecked = sharedPref?.getString("unit", "metric") == "imperial"
 
@@ -46,8 +86,11 @@ class SettingsFragment : Fragment() {
         val applyButton = view.findViewById<Button>(R.id.applyButton)
 
         userViewModel.user.observe(viewLifecycleOwner) {
-            val city = it.city
-            val country = it.country
+            var latitude = savedLocation.latitude
+            var longitude = savedLocation.longitude
+            var locationUserInput = true
+            savedInputCountry = null
+            savedInputCity = null
 
             applyButton.setOnClickListener {
                 val checkedGender = genderRadio.checkedRadioButtonId
@@ -65,6 +108,49 @@ class SettingsFragment : Fragment() {
                     }
                 }
 
+                if (!locationSwitch.isChecked
+                    and !inputCountry.text.isNullOrEmpty()
+                    and !inputCity.text.isNullOrEmpty()
+                    ) {
+                    val matchedCountries = sampleCities.country.mapIndexed { index, value ->
+                        if (inputCountry.text.toString() == value) {
+                            index
+                        } else {
+                            null
+                        }
+                    }
+                    Log.d("input country matches Test", matchedCountries.toString())
+
+                    val matchedCities = sampleCities.city.mapIndexed { index, value ->
+                        if (inputCity.text.toString() == value) {
+                            index
+                        } else {
+                            null
+                        }
+                    }
+                    Log.d("input city matches Test", matchedCities.toString())
+                    Log.d("input country not null Test", matchedCountries.filterNotNull().toString())
+
+                    if (matchedCountries.filterNotNull().isNotEmpty()) {
+                        val matchedBoth = matchedCities.find { value ->
+                            value == matchedCountries.filterNotNull()[0]
+                        }
+                        Log.d("input country and city match Test", matchedBoth.toString())
+
+                        if (matchedBoth != null) {
+                            latitude = sampleCities.latitude[matchedBoth]!!
+                            longitude = sampleCities.longitude[matchedBoth]!!
+
+                            locationUserInput = false
+                            savedInputCountry = inputCountry.text.toString()
+                            savedInputCity = inputCity.text.toString()
+
+                            Log.d("new latitude Test", latitude)
+                            Log.d("new longitude Test", longitude)
+                        }
+                    }
+                }
+
                 editPref?.apply {
                     putString("gender", gender)
 
@@ -74,16 +160,39 @@ class SettingsFragment : Fragment() {
                         putString("unit", "imperial")
                     }
 
+                    putBoolean("location", locationUserInput)
+                    putString("inputCountry", savedInputCountry)
+                    putString("inputCity", savedInputCity)
+
                     apply()
                 }
 
                 userViewModel.initOrUpdate(
-                    city,
-                    country,
+                    latitude,
+                    longitude,
                     gender
                 )
             }
         }
         return view
     }
+
+    private fun getWorldCities(): MapSample {
+        val csvFile = resources.openRawResource(R.raw.worldcities)
+        val rows: List<Map<String, String>> = csvReader().readAllWithHeader(csvFile)
+
+        return MapSample(
+            country = rows.map { it["iso2"] }, // 2 letter country code
+            city = rows.map { it["city_ascii"] },
+            latitude = rows.map { it["lat"] },
+            longitude = rows.map { it["lng"] }
+        )
+    }
 }
+
+private data class MapSample(
+    val country: List<String?>,
+    val city: List<String?>,
+    val latitude: List<String?>,
+    val longitude: List<String?>
+)

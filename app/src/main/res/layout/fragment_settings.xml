@@ -178,14 +178,37 @@
                 tools:ignore="RelativeOverlap" />
 
             <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/locationSwitch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:switchMinWidth="50dp"
                 android:padding="16dp"
-                android:theme="@style/genderSwitch"/>
+                android:switchMinWidth="50dp"
+                android:theme="@style/genderSwitch" />
         </RelativeLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/countryText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Country Code (ISO 2)" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/cityText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="City" />
+        </com.google.android.material.textfield.TextInputLayout>
     </LinearLayout>
 
     <LinearLayout
