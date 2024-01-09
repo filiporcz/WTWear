@@ -48,7 +48,7 @@
             userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
 
             fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-            while (//ActivityCompat.checkSelfPermission(
+            if (//ActivityCompat.checkSelfPermission(
             //    this,
             //    Manifest.permission.ACCESS_FINE_LOCATION
             //) != PackageManager.PERMISSION_GRANTED &&
@@ -112,8 +112,8 @@
                         }
                     }
                     // REPLACE THE ONE ON withContext ABOVE WITH THIS IF IT DOES NOT GO PAST LOADING SCREEN
-                    //Log.d("CHANGING:", "Going to main layout")
-                    //showMainLayout()
+                    Log.d("CHANGING:", "Going to main layout")
+                    showMainLayout()
 
                     Log.d(
                         "lastLocation RESULT:",

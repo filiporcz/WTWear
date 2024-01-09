@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/frameLayout"
@@ -22,9 +23,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginStart="18dp"
-                android:layout_marginTop="40dp"
-                android:text="9°C"
+                android:text="Loading"
                 android:textColor="@color/black"
                 android:textSize="30sp" />
 
@@ -33,7 +32,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="Feels like: "
+                android:text="Feels like: Loading"
                 android:textColor="@color/contrast5"
                 android:textSize="15sp" />
 
@@ -42,6 +41,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
+                android:layout_marginTop="5sp"
+                android:layout_marginBottom="5sp"
                 android:text="Sample text - rain so clothes restricted for rain"
                 android:textColor="@color/contrast5"
                 android:textSize="10sp" />
