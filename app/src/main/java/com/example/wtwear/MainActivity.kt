@@ -19,6 +19,11 @@
     import kotlinx.coroutines.launch
     import kotlinx.coroutines.withContext
     import java.util.Locale
+    import android.content.Context
+    import android.net.ConnectivityManager
+    import android.net.NetworkCapabilities
+    import android.os.Build
+    import androidx.appcompat.app.AlertDialog
 
     val exceptionHandler = CoroutineExceptionHandler{ _, throwable->
         Log.d("ERROR FROM EXCEPTION HANDLER:", "$throwable")
@@ -46,6 +51,12 @@
             geocoder = Geocoder(this, Locale.getDefault())
             supportActionBar?.hide()
             userViewModel = ViewModelProvider(this)[UserViewModel::class.java]
+
+            // Check for internet connectivity
+            if (!isNetworkAvailable()) {
+                showNoInternetDialog()
+                return
+            }
 
             fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
             if (//ActivityCompat.checkSelfPermission(
@@ -203,6 +214,32 @@
 
         private fun replaceFragment(fragment: Fragment) {
             supportFragmentManager.beginTransaction().replace(R.id.frame_layout, fragment).commit()
+        }
+
+        private fun isNetworkAvailable(): Boolean {
+            val connectivityManager =
+                getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                val networkCapabilities = connectivityManager.activeNetwork ?: return false
+                val actNw =
+                    connectivityManager.getNetworkCapabilities(networkCapabilities) ?: return false
+
+                return actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
+                        actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
+            } else {
+                val activeNetworkInfo = connectivityManager.activeNetworkInfo
+                return activeNetworkInfo != null && activeNetworkInfo.isConnected
+            }
+        }
+
+        private fun showNoInternetDialog() {
+            AlertDialog.Builder(this)
+                .setTitle("No Internet Connection")
+                .setMessage("The app won't function properly without an internet connection.")
+                .setPositiveButton("Exit") { _, _ -> finish() }
+                .setCancelable(false)
+                .show()
         }
 
         //private fun fetchLocation() {
