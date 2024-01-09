@@ -15,6 +15,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
 import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import com.google.android.material.textfield.TextInputEditText
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context.NOTIFICATION_SERVICE
+import androidx.core.app.NotificationManagerCompat
+import android.content.Intent
+import android.provider.Settings
+import android.net.Uri
+
 
 class SettingsFragment : Fragment() {
     @SuppressLint("CommitPrefEdits")
@@ -33,10 +41,12 @@ class SettingsFragment : Fragment() {
                 val maleButton = view.findViewById<RadioButton>(R.id.maleRadioButton)
                 maleButton.isChecked = true
             }
+
             "f" -> {
                 val femaleButton = view.findViewById<RadioButton>(R.id.femaleRadioButton)
                 femaleButton.isChecked = true
             }
+
             else -> {
                 val neutralButton = view.findViewById<RadioButton>(R.id.neutralRadioButton)
                 neutralButton.isChecked = true
@@ -101,19 +111,22 @@ class SettingsFragment : Fragment() {
                     R.id.maleRadioButton -> {
                         "m"
                     }
+
                     R.id.femaleRadioButton -> {
                         "f"
                     }
+
                     else -> {
                         null
                     }
                 }
 
-                (activity as AppCompatActivity).supportActionBar?.title = "${savedLocation.city}, ${savedLocation.country}"
+                (activity as AppCompatActivity).supportActionBar?.title =
+                    "${savedLocation.city}, ${savedLocation.country}"
                 if (!locationSwitch.isChecked
                     and !inputCountry.text.isNullOrEmpty()
                     and !inputCity.text.isNullOrEmpty()
-                    ) {
+                ) {
                     val matchedCountries = sampleCities.country.mapIndexed { index, value ->
                         if (inputCountry.text.toString() == value) {
                             index
@@ -146,7 +159,8 @@ class SettingsFragment : Fragment() {
                             savedInputCountry = inputCountry.text.toString()
                             savedInputCity = inputCity.text.toString()
 
-                            (activity as AppCompatActivity).supportActionBar?.title = "$savedInputCity, $savedInputCountry"
+                            (activity as AppCompatActivity).supportActionBar?.title =
+                                "$savedInputCity, $savedInputCountry"
 
                             Log.d("new latitude Test", latitude)
                             Log.d("new longitude Test", longitude)
@@ -176,6 +190,24 @@ class SettingsFragment : Fragment() {
                     gender
                 )
             }
+            val notificationSwitch = view.findViewById<SwitchCompat>(R.id.notificationsSwitch)
+
+            // Set the initial state of the notifications switch based on notification permissions
+            notificationSwitch.isChecked = NotificationManagerCompat.from(requireContext()).areNotificationsEnabled()
+
+            notificationSwitch.setOnCheckedChangeListener { _, isChecked ->
+                if (isChecked) {
+                    // Check if notification permission is granted
+                    if (!NotificationManagerCompat.from(requireContext())
+                            .areNotificationsEnabled()
+                    ) {
+                        // Request notification permission
+                        requestNotificationPermission()
+                    }
+                } else {
+                    revokeNotificationPermission()
+                }
+            }
         }
         return view
     }
@@ -190,6 +222,35 @@ class SettingsFragment : Fragment() {
             latitude = rows.map { it["lat"] },
             longitude = rows.map { it["lng"] }
         )
+    }
+
+    private fun requestNotificationPermission() {
+        val notificationManager =
+            requireContext().getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+
+        val channelId = "channel_id"
+        val channelName = "Channel Name"
+        val importance = NotificationManager.IMPORTANCE_DEFAULT
+
+        val notificationChannel = NotificationChannel(channelId, channelName, importance)
+        notificationManager.createNotificationChannel(notificationChannel)
+
+        // Check if permission is not granted
+        if (!NotificationManagerCompat.from(requireContext()).areNotificationsEnabled()) {
+            // Request notification permission
+            val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+            intent.putExtra(Settings.EXTRA_APP_PACKAGE, requireContext().packageName)
+            startActivity(intent)
+        }
+    }
+    private fun revokeNotificationPermission() {
+        // Check if notification permission is granted
+        if (NotificationManagerCompat.from(requireContext()).areNotificationsEnabled()) {
+            // Revoke notification permission
+            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+            intent.data = Uri.fromParts("package", requireContext().packageName, null)
+            startActivity(intent)
+        }
     }
 }
 
