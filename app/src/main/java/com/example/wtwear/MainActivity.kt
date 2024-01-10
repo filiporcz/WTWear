@@ -122,14 +122,13 @@
                             }
                         }
                     }
-                    // REPLACE THE ONE ON withContext ABOVE WITH THIS IF IT DOES NOT GO PAST LOADING SCREEN
-                    Log.d("CHANGING:", "Going to main layout")
-                    showMainLayout()
-
                     Log.d(
                         "lastLocation RESULT:",
                         "LATITUDE: ${location.latitude}, LONGITUDE: ${location.longitude}"
                     )
+                } else {
+                    // Handle the case where location is null
+                    Log.e("LOCATION ERROR:", "Location is null")
                 }
             }
 
