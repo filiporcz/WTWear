@@ -13,11 +13,6 @@ import android.widget.TextView
 
 class HomeFragment : Fragment() {
 
-    //private val hatImages = listOf(R.drawable.hat1_n, R.drawable.hat2_f, R.drawable.hat3_n)
-    //private val coatImages = listOf(R.drawable.coat1_n, R.drawable.coat2_f, R.drawable.coat3_n)
-    //private val trousersImages = listOf(R.drawable.trousers1_n, R.drawable.trousers2_n, R.drawable.trousers3_n)
-    //private val shoesImages = listOf(R.drawable.shoes1_n, R.drawable.shoes2_n, R.drawable.shoes3_n)
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

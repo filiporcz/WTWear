@@ -39,12 +39,6 @@
 
         private lateinit var bottomNavigationView: BottomNavigationView
 
-        //change this later accordingly
-        //private val hatImages = listOf(R.drawable.hat1_n, R.drawable.hat2_f, R.drawable.hat3_n)
-        //private val coatImages = listOf(R.drawable.coat1_n, R.drawable.coat2_f, R.drawable.coat3_n)
-        //private val trousersImages = listOf(R.drawable.trousers1_n, R.drawable.trousers2_n, R.drawable.trousers3_n)
-        //private val shoesImages = listOf(R.drawable.shoes1_n, R.drawable.shoes2_n, R.drawable.shoes3_n)
-
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
             val sharedPref = getPreferences(MODE_PRIVATE)
@@ -59,10 +53,7 @@
             }
 
             fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-            if (//ActivityCompat.checkSelfPermission(
-            //    this,
-            //    Manifest.permission.ACCESS_FINE_LOCATION
-            //) != PackageManager.PERMISSION_GRANTED &&
+            while (
                 ActivityCompat.checkSelfPermission(
                     this,
                     Manifest.permission.ACCESS_COARSE_LOCATION
@@ -129,49 +120,9 @@
                 } else {
                     // Handle the case where location is null
                     Log.e("LOCATION ERROR:", "Location is null")
+                    showMainLayout()
                 }
             }
-
-            //val button = findViewById<Button>(R.id.button)
-
-            //button.setOnClickListener {
-            //    fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
-            //        if (location != null) {
-            //             userViewModel.initOrUpdate(
-            //                location.latitude.toString(),
-            //                location.longitude.toString(),
-            //                sharedPref.getString("gender", null)
-            //            )
-
-            //            userViewModel.user.observe(this, Observer {
-            //                Log.d("userViewModel Test User:", it.toString())
-
-            //                lifecycleScope.launch(Dispatchers.IO + exceptionHandler) {
-            //                    Log.d("userViewModel test assign:", "initializing weather")
-            //                    userViewModel.weather.postValue(it.weatherInfo())
-            //                    Log.d("userViewModel test assign:", "initializing clothes")
-            //                    userViewModel.clothes.postValue(it.clothes())
-            //                    Log.d("userViewModel test assign:", "initializing clothes successful")
-
-            //                    withContext(Dispatchers.Main) {
-            //                        //
-            //                        Log.d("CHANGING:", "Going to main layout")
-            //                        showMainLayout()
-            //                    }
-            //                }
-            //            })
-            //            // REPLACE THE ONE ON withContext ABOVE WITH THIS IF IT DOES NOT GO PAST LOADING SCREEN
-            //            //Log.d("CHANGING:", "Going to main layout")
-            //            //showMainLayout()
-
-            //            Log.d(
-            //                "lastLocation RESULT:",
-            //                "LATITUDE: ${location.latitude}, LONGITUDE: ${location.longitude}"
-            //            )
-            //        }
-            //    }
-            //}
-
         }
 
         private fun showMainLayout() {
@@ -182,9 +133,6 @@
             userViewModel.user.observe(this) {
                 Log.d("userViewModel Test 2 User:", it.toString())
             }
-
-            //toolBar = findViewById(R.id.toolbar)
-            //setSupportActionBar(toolBar)
             supportActionBar?.show()
             bottomNavigationView = findViewById(R.id.bottomNavigationView)
 

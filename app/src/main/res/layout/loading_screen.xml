@@ -4,27 +4,10 @@
     android:layout_height="match_parent"
     android:background="@color/ui2">
 
-    <!--
-    <Button
-        android:id="@+id/button"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="invisible"
-        android:text="" />
-    -->
     <pl.droidsonroids.gif.GifImageView
         android:id="@+id/startup"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:src="@drawable/loading_screen_gif"
         />
-
-    <Button
-        android:id="@+id/button"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/transparent"
-        android:textColor="@android:color/transparent"
-        android:text="Get Location" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>
