@@ -23,7 +23,6 @@ import android.content.Intent
 import android.provider.Settings
 import android.net.Uri
 
-
 class SettingsFragment : Fragment() {
     @SuppressLint("CommitPrefEdits")
     override fun onCreateView(
@@ -128,7 +127,7 @@ class SettingsFragment : Fragment() {
                     and !inputCity.text.isNullOrEmpty()
                 ) {
                     val matchedCountries = sampleCities.country.mapIndexed { index, value ->
-                        if (inputCountry.text.toString() == value) {
+                        if (inputCountry.text.toString().equals(value, true)) {
                             index
                         } else {
                             null
@@ -137,7 +136,7 @@ class SettingsFragment : Fragment() {
                     Log.d("input country matches Test", matchedCountries.toString())
 
                     val matchedCities = sampleCities.city.mapIndexed { index, value ->
-                        if (inputCity.text.toString() == value) {
+                        if (inputCity.text.toString().equals(value, true)) {
                             index
                         } else {
                             null
@@ -160,7 +159,12 @@ class SettingsFragment : Fragment() {
                             savedInputCity = inputCity.text.toString()
 
                             (activity as AppCompatActivity).supportActionBar?.title =
-                                "$savedInputCity, $savedInputCountry"
+                                "${
+                                    savedInputCity?.lowercase()?.split(" ")?.joinToString(" ") {
+                                        it.replaceFirstChar { x -> x.uppercase() }
+                                    }
+                                }, " +
+                                        "${savedInputCountry?.uppercase()}"
 
                             Log.d("new latitude Test", latitude)
                             Log.d("new longitude Test", longitude)
