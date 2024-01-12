@@ -2,6 +2,7 @@
 <resources>
     <style name="Theme.WTWear" parent="Theme.Material3.DayNight">
         <item name="android:actionBarStyle">@style/WTWearBar</item>
+        <item name="android:fontFamily">@font/jost_font</item>
     </style>
 
     <style name="WTWearBar" parent="Widget.AppCompat.ActionBar">
