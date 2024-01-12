@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 
 class HomeFragment : Fragment() {
@@ -44,6 +45,16 @@ class HomeFragment : Fragment() {
                 feelsLike.text = feelsLikeText
             }
         }
+
+        val hatLayout = view.findViewById<LinearLayout>(R.id.hatLayout)
+        val topLayout = view.findViewById<LinearLayout>(R.id.topLayout)
+        val trousersLayout = view.findViewById<LinearLayout>(R.id.trousersLayout)
+        val shoesLayout = view.findViewById<LinearLayout>(R.id.shoesLayout)
+
+        val hatTitle = view.findViewById<TextView>(R.id.hatTitle)
+        val topTitle = view.findViewById<TextView>(R.id.topTitle)
+        val trousersTitle = view.findViewById<TextView>(R.id.trousersTitle)
+        val shoesTitle = view.findViewById<TextView>(R.id.shoesTitle)
 
         val hatImage = view.findViewById<ImageView>(R.id.hatImage)
         val topImage = view.findViewById<ImageView>(R.id.topImage)
@@ -85,6 +96,16 @@ class HomeFragment : Fragment() {
             val trousersDescriptions = it.descriptions(trousers)
             val shoesDescriptions = it.descriptions(shoes)
 
+            Log.d("Test Titles Hat:", hatTitles.toString())
+            Log.d("Test Titles Top:", topTitles.toString())
+            Log.d("Test Titles Trousers:", trousersTitles.toString())
+            Log.d("Test Titles Shoes:", shoesTitles.toString())
+
+            hatTitle.text = hatTitles[0]
+            topTitle.text = topTitles[0]
+            trousersTitle.text = trousersTitles[0]
+            shoesTitle.text = shoesTitles[0]
+
             Log.d("Test Images Hat:", hatImages.toString())
             Log.d("Test Images Top:", topImages.toString())
             Log.d("Test Images Trousers:", trousersImages.toString())
@@ -105,15 +126,23 @@ class HomeFragment : Fragment() {
             changeClothingXMLDescription(trousersImage, trousersDescriptions, 0)
             changeClothingXMLDescription(shoesImage, shoesDescriptions, 0)
 
-            setOnClickListenerForImage(leftButton1, rightButton1, hatImage, hatImages, hatDescriptions)
-            setOnClickListenerForImage(leftButton2, rightButton2, topImage, topImages, topDescriptions)
-            setOnClickListenerForImage(leftButton3, rightButton3, trousersImage, trousersImages, trousersDescriptions)
-            setOnClickListenerForImage(leftButton4, rightButton4, shoesImage, shoesImages, shoesDescriptions)
+            setOnClickListenerForImage(
+                leftButton1, rightButton1, hatTitle, hatTitles, hatImage, hatImages, hatDescriptions
+            )
+            setOnClickListenerForImage(
+                leftButton2, rightButton2, topTitle, topTitles, topImage, topImages, topDescriptions
+            )
+            setOnClickListenerForImage(
+                leftButton3, rightButton3, trousersTitle, trousersTitles, trousersImage, trousersImages, trousersDescriptions
+            )
+            setOnClickListenerForImage(
+                leftButton4, rightButton4, shoesTitle, shoesTitles, shoesImage, shoesImages, shoesDescriptions
+            )
 
-            setClickListenerForPopup(hatImage)
-            setClickListenerForPopup(topImage)
-            setClickListenerForPopup(trousersImage)
-            setClickListenerForPopup(shoesImage)
+            setClickListenerForPopup(hatLayout, hatImage)
+            setClickListenerForPopup(topLayout, topImage)
+            setClickListenerForPopup(trousersLayout, trousersImage)
+            setClickListenerForPopup(shoesLayout, shoesImage)
         }
 
         //setOnClickListenerForImage(leftButton1, rightButton1, hatImage, hatImages)
@@ -153,20 +182,24 @@ class HomeFragment : Fragment() {
     private fun setOnClickListenerForImage(
         leftButton: ImageView,
         rightButton: ImageView,
+        middleTitle: TextView,
+        titleList: List<String>,
         middleImage: ImageView,
         imageList: List<Int>,
         descriptionList: List<String?>
     ) {
         leftButton.setOnClickListener {
-            rotateImage(middleImage, imageList, descriptionList, backward = true)
+            rotateImage(middleTitle, titleList, middleImage, imageList, descriptionList, backward = true)
         }
 
         rightButton.setOnClickListener {
-            rotateImage(middleImage, imageList, descriptionList, backward = false)
+            rotateImage(middleTitle, titleList, middleImage, imageList, descriptionList, backward = false)
         }
     }
 
     private fun rotateImage(
+        middleTitle: TextView,
+        titleList: List<String>,
         middleImage: ImageView,
         imageList: List<Int>,
         descriptionList: List<String?>,
@@ -175,7 +208,6 @@ class HomeFragment : Fragment() {
         // Get the current index of the middle image
         val currentRes = middleImage.tag as? Int ?: 0
         val currentIndex = imageList.indexOf(currentRes)
-        //val currentIndex = imageList.indexOf(currentImage)
         Log.d("Test rotateImage tag", currentIndex.toString())
 
         // Calculate the new index based on the rotation direction
@@ -186,14 +218,15 @@ class HomeFragment : Fragment() {
         }
 
         // Update the middle image with the new resource
+        middleTitle.text = titleList[newIndex]
         middleImage.setImageResource(imageList[newIndex])
         changeClothingXMLDescription(middleImage, descriptionList, newIndex)
 
         // Save the resource ID as a tag for the middle image
         middleImage.tag = imageList[newIndex]
     }
-    private fun setClickListenerForPopup(imageView: ImageView) {
-        imageView.setOnClickListener {
+    private fun setClickListenerForPopup(layout: LinearLayout, imageView: ImageView) {
+        layout.setOnClickListener {
             // Get the drawable resource ID from the tag of the clicked ImageView
             val imageResource = imageView.tag as? Int ?: 0
             Log.d("Test imageResource tag", imageResource.toString())

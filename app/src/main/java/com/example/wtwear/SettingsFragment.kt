@@ -147,7 +147,7 @@ class SettingsFragment : Fragment() {
 
                     if (matchedCountries.isNotEmpty() and matchedCities.isNotEmpty()) {
                         val matchedBoth = matchedCountries.find { value ->
-                            value == matchedCities[0]
+                            value in matchedCities
                         }
                         Log.d("input country and city match Test", matchedBoth.toString())
 

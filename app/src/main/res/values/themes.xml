@@ -1,10 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.WTWear" parent="Theme.Material3.DayNight"></style>
+    <style name="Theme.WTWear" parent="Theme.Material3.DayNight">
+        <item name="android:actionBarStyle">@style/WTWearBar</item>
+    </style>
+
+    <style name="WTWearBar" parent="Widget.AppCompat.ActionBar">
+        <item name="android:background">@color/ui2</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:layout_gravity">center</item>
+    </style>
+
     <style name="App.Custom.Indicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
         <item name="android:color">@color/ui2</item>
     </style>
-
+    
     <style name="genderSwitch" parent="Theme.AppCompat.Light">
         <item name="colorControlActivated">@color/ui5</item>
         <item name="colorSwitchThumbNormal">@color/ui2</item>
