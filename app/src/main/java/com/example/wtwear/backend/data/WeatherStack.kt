@@ -32,7 +32,7 @@ fun fetchWSData(city: String, country: String): WSWeather {
 
 fun fetchWeatherStack(city: String, country: String): Response {
     val baseUrl = "http://api.weatherstack.com/current"
-    val apiKey = "bef2f3beb9e2dde74862a60de7d5ccad"
+    val apiKey = "ebcadd5783986e5b400c3de58e18812b"
     val url = "${baseUrl}?access_key=${apiKey}&query=${city},${country}"
 
     val request = Request(Method.GET, url)
