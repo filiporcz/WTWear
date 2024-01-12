@@ -36,9 +36,6 @@ class PopUpFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        //userViewModel.clothes.observe(viewLifecycleOwner) {
-        //}
-
         // Retrieve the image resource ID from arguments
         val imageResource = arguments?.getInt(ARG_IMAGE_RESOURCE) ?: 0
 

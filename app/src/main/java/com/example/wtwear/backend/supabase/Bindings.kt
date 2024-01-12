@@ -15,9 +15,6 @@ object Clothings : Table<Clothing>("Clothing") {
     val description = text("description").bindTo { it.description }
     val image = varchar("image").bindTo { it.image }
     val gender = varchar("gender").bindTo { it.gender }
-    //val temp_name = varchar("temp_name").bindTo { it.temp?.name }
-    //val precip_name = varchar("precip_name").bindTo { it.precip?.name }
-    //val wind_name = varchar("wind_name").bindTo { it.wind?.name }
     val temp_name = varchar("temp_name").bindTo { it.temp_name }
     val precip_name = varchar("precip_name").bindTo { it.precip_name }
     val wind_name = varchar("wind_name").bindTo { it.wind_name }

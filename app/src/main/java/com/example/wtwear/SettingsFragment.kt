@@ -22,6 +22,7 @@ import androidx.core.app.NotificationManagerCompat
 import android.content.Intent
 import android.provider.Settings
 import android.net.Uri
+import android.widget.Toast
 
 class SettingsFragment : Fragment() {
     @SuppressLint("CommitPrefEdits")
@@ -95,37 +96,35 @@ class SettingsFragment : Fragment() {
         val genderRadio = view.findViewById<RadioGroup>(R.id.genderRadioGroup)
         val applyButton = view.findViewById<Button>(R.id.applyButton)
 
-        userViewModel.user.observe(viewLifecycleOwner) {
-            var latitude = savedLocation.latitude
-            var longitude = savedLocation.longitude
-            var locationUserInput = true
-            savedInputCountry = null
-            savedInputCity = null
+        var latitude = savedLocation.latitude
+        var longitude = savedLocation.longitude
+        var locationUserInput = true
+        savedInputCountry = null
+        savedInputCity = null
 
-            applyButton.setOnClickListener {
-                val checkedGender = genderRadio.checkedRadioButtonId
-                val genderButton = view.findViewById<Button>(checkedGender)
+        applyButton.setOnClickListener {
+            val checkedGender = genderRadio.checkedRadioButtonId
+            val genderButton = view.findViewById<Button>(checkedGender)
 
-                val gender = when (genderButton.id) {
-                    R.id.maleRadioButton -> {
-                        "m"
-                    }
-
-                    R.id.femaleRadioButton -> {
-                        "f"
-                    }
-
-                    else -> {
-                        null
-                    }
+            val gender = when (genderButton.id) {
+                R.id.maleRadioButton -> {
+                    "m"
                 }
 
-                (activity as AppCompatActivity).supportActionBar?.title =
-                    "${savedLocation.city}, ${savedLocation.country}"
-                if (!locationSwitch.isChecked
-                    and !inputCountry.text.isNullOrEmpty()
-                    and !inputCity.text.isNullOrEmpty()
-                ) {
+                R.id.femaleRadioButton -> {
+                    "f"
+                }
+
+                else -> {
+                    null
+                }
+            }
+
+            (activity as AppCompatActivity).supportActionBar?.title =
+                "${savedLocation.city}, ${savedLocation.country}"
+            if (!locationSwitch.isChecked ) {
+                // Check if location is off and user inputs country code and city
+                if (!inputCountry.text.isNullOrEmpty() and !inputCity.text.isNullOrEmpty()) {
                     val matchedCountries = sampleCities.country.mapIndexed { index, value ->
                         if (inputCountry.text.toString().equals(value, true)) {
                             index
@@ -144,13 +143,13 @@ class SettingsFragment : Fragment() {
                     }.filterNotNull()
                     Log.d("input city matches Test", matchedCities.toString())
 
-                    if (matchedCountries.isNotEmpty() and matchedCities.isNotEmpty()) {
+                    if (matchedCountries.isNotEmpty() and matchedCities.isNotEmpty()) { // If input matches the dataset
                         val matchedBoth = matchedCountries.find { value ->
                             value in matchedCities
                         }
                         Log.d("input country and city match Test", matchedBoth.toString())
 
-                        if (matchedBoth != null) {
+                        if (matchedBoth != null) { // If country and city matches
                             latitude = sampleCities.latitude[matchedBoth]!!
                             longitude = sampleCities.longitude[matchedBoth]!!
 
@@ -162,55 +161,60 @@ class SettingsFragment : Fragment() {
                                 "${
                                     savedInputCity?.lowercase()?.split(" ")?.joinToString(" ") {
                                         it.replaceFirstChar { x -> x.uppercase() }
-                                    }
-                                }, " +
-                                        "${savedInputCountry?.uppercase()}"
+                                    } // Make it uppercase for each first letter of each word
+                                }, ${savedInputCountry?.uppercase()}"
 
                             Log.d("new latitude Test", latitude)
                             Log.d("new longitude Test", longitude)
+                        } else {
+                            toastMSG("Error: City does not belong in Country Code or vice versa", locationSwitch)
                         }
-                    }
-                }
-
-                editPref?.apply {
-                    putString("gender", gender)
-
-                    if (!unitSwitch.isChecked) {
-                        putString("unit", "metric")
                     } else {
-                        putString("unit", "imperial")
-                    }
-
-                    putBoolean("location", locationUserInput)
-                    putString("inputCountry", savedInputCountry)
-                    putString("inputCity", savedInputCity)
-
-                    apply()
-                }
-
-                userViewModel.initOrUpdate(
-                    latitude,
-                    longitude,
-                    gender
-                )
-            }
-            val notificationSwitch = view.findViewById<SwitchCompat>(R.id.notificationsSwitch)
-
-            // Set the initial state of the notifications switch based on notification permissions
-            notificationSwitch.isChecked = NotificationManagerCompat.from(requireContext()).areNotificationsEnabled()
-
-            notificationSwitch.setOnCheckedChangeListener { _, isChecked ->
-                if (isChecked) {
-                    // Check if notification permission is granted
-                    if (!NotificationManagerCompat.from(requireContext())
-                            .areNotificationsEnabled()
-                    ) {
-                        // Request notification permission
-                        requestNotificationPermission()
+                        toastMSG("Error: Input does not match Country Code/City in the dataset", locationSwitch)
                     }
                 } else {
-                    revokeNotificationPermission()
+                    toastMSG("Error: Empty input", locationSwitch)
                 }
+            }
+
+            editPref?.apply {
+                putString("gender", gender)
+
+                if (!unitSwitch.isChecked) {
+                    putString("unit", "metric")
+                } else {
+                    putString("unit", "imperial")
+                }
+
+                putBoolean("location", locationUserInput)
+                putString("inputCountry", savedInputCountry)
+                putString("inputCity", savedInputCity)
+
+                apply()
+            }
+
+            userViewModel.initOrUpdate(
+                latitude,
+                longitude,
+                gender
+            )
+        }
+        val notificationSwitch = view.findViewById<SwitchCompat>(R.id.notificationsSwitch)
+
+        // Set the initial state of the notifications switch based on notification permissions
+        notificationSwitch.isChecked = NotificationManagerCompat.from(requireContext()).areNotificationsEnabled()
+
+        notificationSwitch.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                // Check if notification permission is granted
+                if (!NotificationManagerCompat.from(requireContext())
+                        .areNotificationsEnabled()
+                ) {
+                    // Request notification permission
+                    requestNotificationPermission()
+                }
+            } else {
+                revokeNotificationPermission()
             }
         }
         return view
@@ -226,6 +230,13 @@ class SettingsFragment : Fragment() {
             latitude = rows.map { it["lat"] },
             longitude = rows.map { it["lng"] }
         )
+    }
+
+    private fun toastMSG(text: String, switch: SwitchCompat) {
+        val toast = Toast.makeText(context, text, Toast.LENGTH_SHORT)
+        toast.show()
+
+        switch.isChecked = true
     }
 
     private fun requestNotificationPermission() {

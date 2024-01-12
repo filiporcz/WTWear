@@ -1,6 +1,5 @@
 package com.example.wtwear
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.util.Log

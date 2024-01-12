@@ -10,9 +10,6 @@ interface Clothing : Entity<Clothing> {
     val description: String?
     val image: String?
     val gender: String?
-    //val temp: Temperature?
-    //val precip: Precipitation?
-    //val wind: Wind?
     val temp_name: String?
     val precip_name: String?
     val wind_name: String?

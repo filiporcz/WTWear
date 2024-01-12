@@ -44,16 +44,16 @@ fun wsJSONtoData(response: Response): WSWeather {
     val weatherInfo = node.get("current") // the weather info is stored in the current object
 
     return WSWeather(
-        temperature = mapper.treeToValue<Int>(weatherInfo.get("temperature")),
-        precipitation = mapper.treeToValue<Double>(weatherInfo.get("precip")),
-        wind = mapper.treeToValue<Int>(weatherInfo.get("wind_speed")),
+        temperature = mapper.treeToValue(weatherInfo.get("temperature")),
+        precipitation = mapper.treeToValue(weatherInfo.get("precip")),
+        wind = mapper.treeToValue(weatherInfo.get("wind_speed")),
 
-        windDegree = mapper.treeToValue<Int>(weatherInfo.get("wind_degree")),
-        windDir = mapper.treeToValue<String>(weatherInfo.get("wind_dir")),
-        pressure = mapper.treeToValue<Int>(weatherInfo.get("pressure")),
-        humidity = mapper.treeToValue<Int>(weatherInfo.get("humidity")),
-        cloudCover = mapper.treeToValue<Int>(weatherInfo.get("cloudcover")),
-        feelsLike = mapper.treeToValue<Int>(weatherInfo.get("feelslike")),
-        uvIndex = mapper.treeToValue<Int>(weatherInfo.get("uv_index"))
+        windDegree = mapper.treeToValue(weatherInfo.get("wind_degree")),
+        windDir = mapper.treeToValue(weatherInfo.get("wind_dir")),
+        pressure = mapper.treeToValue(weatherInfo.get("pressure")),
+        humidity = mapper.treeToValue(weatherInfo.get("humidity")),
+        cloudCover = mapper.treeToValue(weatherInfo.get("cloudcover")),
+        feelsLike = mapper.treeToValue(weatherInfo.get("feelslike")),
+        uvIndex = mapper.treeToValue(weatherInfo.get("uv_index"))
     )
 }
