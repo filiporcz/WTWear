@@ -139,17 +139,6 @@ class HomeFragment : Fragment() {
             setClickListenerForPopup(trousersLayout, trousersImage)
             setClickListenerForPopup(shoesLayout, shoesImage)
         }
-
-        //setOnClickListenerForImage(leftButton1, rightButton1, hatImage, hatImages)
-        //setOnClickListenerForImage(leftButton2, rightButton2, topImage, coatImages)
-        //setOnClickListenerForImage(leftButton3, rightButton3, trousersImage, trousersImages)
-        //setOnClickListenerForImage(leftButton4, rightButton4, shoesImage, shoesImages)
-
-        //setClickListenerForPopup(hatImage)
-        //setClickListenerForPopup(topImage)
-        //setClickListenerForPopup(trousersImage)
-        //setClickListenerForPopup(shoesImage)
-
         return view
     }
 

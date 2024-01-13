@@ -22,7 +22,6 @@
     import android.content.Context
     import android.net.ConnectivityManager
     import android.net.NetworkCapabilities
-    import android.os.Build
     import androidx.appcompat.app.AlertDialog
 
     val exceptionHandler = CoroutineExceptionHandler{ _, throwable->
@@ -167,17 +166,12 @@
             val connectivityManager =
                 getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                val networkCapabilities = connectivityManager.activeNetwork ?: return false
-                val actNw =
-                    connectivityManager.getNetworkCapabilities(networkCapabilities) ?: return false
+            val networkCapabilities = connectivityManager.activeNetwork ?: return false
+            val actNw =
+                connectivityManager.getNetworkCapabilities(networkCapabilities) ?: return false
 
-                return actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
-                        actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
-            } else {
-                val activeNetworkInfo = connectivityManager.activeNetworkInfo
-                return activeNetworkInfo != null && activeNetworkInfo.isConnected
-            }
+            return actNw.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
+                    actNw.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
         }
 
         private fun showNoInternetDialog() {
